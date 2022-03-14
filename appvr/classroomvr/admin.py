@@ -6,15 +6,15 @@ from .models import *
 
 class InscriptionInline(admin.TabularInline):
     model = Inscription
+    extra = 1
 class ResourceInline(admin.TabularInline):
     model = Resource
+    extra = 1
     # readonly_fields = ('routeResource',)
 class ExerciseInline(admin.TabularInline):
     model = Exercise
+    extra = 1
     # readonly_fields = ('file',)
-class SchoolInline(admin.StackedInline):
-    model = School
-    extra = 3
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('name', 'school',);
