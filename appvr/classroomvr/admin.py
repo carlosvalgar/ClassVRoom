@@ -2,28 +2,82 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import *
 
+from django.contrib import admin
 # Register your models here.
-class SchoolInline(admin.StackedInline):
-    model = School
-    extra = 3
+
+
+class SchoolAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        qs = super(SchoolAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        if request.user.groups.filter(name="admin_centro").exists():
+            return qs.filter(name=request.user.school)
+        if request.user.groups.filter(name="professors").exists():
+            return qs.filter(name=request.user.school)
+
 
 class CourseAdmin(admin.ModelAdmin):
-    fieldsets = [
-        (None, {'fields': ['name']}),
-    ]
+    def get_queryset(self, request):
+        qs = super(CourseAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs       
+        if request.user.groups.filter(name="admin_centro").exists():
+            return qs.filter(school=request.user.school)
 
-UserAdmin.list_display += ('school', 'role', 'permissions')
-UserAdmin.list_filter += ('school', 'role', 'permissions')
-UserAdmin.fieldsets += ((None, {'fields': ['school','role', 'permissions']}),)
-UserAdmin.add_fieldsets += ((None, {'fields': ['school', 'role', 'permissions']}),)
 
-admin.site.register(User, UserAdmin)
-admin.site.register(School)
-admin.site.register(Course)
-admin.site.register(Inscription)
-admin.site.register(Resource)
-admin.site.register(Exercise)
-admin.site.register(Pin)
+
+class InscriptionAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        qs = Inscription.objects.filter(course__school=request.user.school)
+        if request.user.is_superuser:
+            qs = super(InscriptionAdmin, self).get_queryset(request)
+            return qs
+        if request.user.groups.filter(name="admin_centro").exists():
+            return qs
+
+class ResourceAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        qs = Resource.objects.filter(course__school=request.user.school)
+        if request.user.is_superuser:
+            qs = super(ResourceAdmin, self).get_queryset(request)
+            return qs
+        if request.user.groups.filter(name="admin_centro").exists():
+            return qs
+
+class ExerciseAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        qs = Exercise.objects.filter(course__school=request.user.school)
+        if request.user.is_superuser:
+            qs = super(ExerciseAdmin, self).get_queryset(request)
+            return qs
+        if request.user.groups.filter(name="admin_centro").exists():
+            return qs
+
+class PinAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        qs = Pin.objects.filter(exercise__course__school=request.user.school)
+        if request.user.is_superuser:
+            qs = super(PinAdmin, self).get_queryset(request)
+            return qs
+        if request.user.groups.filter(name="admin_centro").exists():
+            return qs
+
+class UserAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        qs = super(UserAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        if request.user.groups.filter(name="admin_centro").exists():
+            return qs.filter(school=request.user.school)
+
+admin.site.register(User,UserAdmin)
+admin.site.register(School,SchoolAdmin)
+admin.site.register(Course, CourseAdmin)
+admin.site.register(Inscription,InscriptionAdmin)
+admin.site.register(Resource,ResourceAdmin)
+admin.site.register(Exercise, ExerciseAdmin)
+admin.site.register(Pin,PinAdmin)
 admin.site.register(PrivacyPolicy)
 admin.site.register(PrivacyPermission)
 admin.site.register(PrivacyPolicies_PrivacyPermissions)
