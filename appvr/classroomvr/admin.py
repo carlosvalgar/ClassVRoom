@@ -13,8 +13,6 @@ class SchoolAdmin(admin.ModelAdmin):
             return qs
         if request.user.groups.filter(name="admin_centro").exists():
             return qs.filter(name=request.user.school)
-        if request.user.groups.filter(name="professors").exists():
-            return qs.filter(name=request.user.school)
 
 
 class CourseAdmin(admin.ModelAdmin):
@@ -63,15 +61,15 @@ class PinAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name="admin_centro").exists():
             return qs
 
-class UserAdmin(admin.ModelAdmin):
+class CustomUserAdmin(UserAdmin):
     def get_queryset(self, request):
-        qs = super(UserAdmin, self).get_queryset(request)
+        qs = super(CustomUserAdmin, self).get_queryset(request)
         if request.user.is_superuser:
             return qs
         if request.user.groups.filter(name="admin_centro").exists():
             return qs.filter(school=request.user.school)
 
-admin.site.register(User,UserAdmin)
+admin.site.register(User,CustomUserAdmin)
 admin.site.register(School,SchoolAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Inscription,InscriptionAdmin)
