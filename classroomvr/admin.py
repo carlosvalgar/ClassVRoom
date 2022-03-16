@@ -12,8 +12,8 @@ class InscriptionInline(admin.TabularInline):
 class ResourceInline(admin.TabularInline):
     model = Resource
     extra = 1
-class ExerciseInline(admin.TabularInline):
-    model = Exercise
+class TaskInline(admin.TabularInline):
+    model = Task
     extra = 1
 
 # Admin view
@@ -26,7 +26,7 @@ class SchoolAdmin(admin.ModelAdmin):
             return qs.filter(name=request.user.school)
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('name', 'school',);
-    inlines = [InscriptionInline, ResourceInline, ExerciseInline,]
+    inlines = [InscriptionInline, ResourceInline, TaskInline,]
 
     def get_queryset(self, request):
         qs = super(CourseAdmin, self).get_queryset(request)
@@ -52,11 +52,11 @@ class ResourceAdmin(admin.ModelAdmin):
             return qs
         if request.user.groups.filter(name="admin_centro").exists():
             return qs
-class ExerciseAdmin(admin.ModelAdmin):
+class TaskAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
-        qs = Exercise.objects.filter(course__school=request.user.school)
+        qs = Task.objects.filter(course__school=request.user.school)
         if request.user.is_superuser:
-            qs = super(ExerciseAdmin, self).get_queryset(request)
+            qs = super(TaskAdmin, self).get_queryset(request)
             return qs
         if request.user.groups.filter(name="admin_centro").exists():
             return qs
@@ -86,7 +86,8 @@ admin.site.register(School,SchoolAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Inscription,InscriptionAdmin)
 admin.site.register(Resource,ResourceAdmin)
-admin.site.register(Exercise, ExerciseAdmin)
+admin.site.register(Task, TaskAdmin)
+admin.site.register(Delivery)
 admin.site.register(Pin,PinAdmin)
 admin.site.register(PrivacyPolicy)
 admin.site.register(PrivacyPermission)

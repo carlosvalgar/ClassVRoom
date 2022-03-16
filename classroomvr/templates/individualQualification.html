@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>hola</title>
+	<style type="text/css">
+		th{
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<button>Anterior</button>
+	<table>
+		<caption>{{ Task }}</caption>
+		<tr>
+				<th>Alumno</th>
+				<th>Correo</th>
+				<th>Archivo</th>
+				<th>Puntuacion</th>
+				<th>Comentario profesor</th>
+				<th>Comentario alumno</th>
+			</tr>
+		<tr>
+			<th>{{Alumn}}</th>
+			<th>{{Alumn.email}}</th>
+			<th>{{Delivery.file}}</th>
+			<th>{{Delivery.score}}</th>
+			<th>{{Delivery.professorCommentary}}</th>
+			<th>{{Delivery.studentCommentary}}</th>
+		</tr>
+	</table>
+	<button>Siguiente</button>
+</body>
+</html>
