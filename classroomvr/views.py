@@ -6,14 +6,16 @@ from .models import *
 
 # Create your views here.
 
-def indvidualQualification(request,taskid,userid):
-	alumn= get_object_or_404(User, pk=userid)
-	task=get_object_or_404(Task, pk=taskid)
-	delivery = get_object_or_404(Delivery, task=taskid, student=alumn)
+def indvidualQualification(request,courseid,taskid,userid):
+	course= get_object_or_404(Course, pk=courseid)
+	alumnCourse = Inscription.objects.filter(course=course.pk, courseRole= 'ST')
+	alumn = get_object_or_404(User, pk=userid)
+	task = get_object_or_404(Task, pk=taskid, course=course.pk)
+	delivery = get_object_or_404(Delivery, task=task.pk, student=userid)
 	conext = {
-		'Task' : task,
-		'Alumn' : alumn,
-		'Delivery' : delivery,
-	}
+        'Task' : task,
+        'Delivery' : delivery,
+        'Alumn' : alumn,
+        'AlumnList' : alumnCourse
+    }
 	return render(request, 'individualQualification.html',conext)
-
