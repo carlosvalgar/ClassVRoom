@@ -7,11 +7,13 @@ from django.utils.translation import gettext_lazy as _
 
 class Role(models.Model):
     name = models.CharField(max_length=30)
+    
 class School(models.Model):
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=50)
     def __str__(self):
         return self.name
+
 class PrivacyPolicy(models.Model):
     name = models.CharField(max_length=100)
     def __str__(self):
@@ -41,6 +43,7 @@ class Inscription(models.Model):
     courseRole = models.CharField(max_length=20, choices=CourseRole.choices, default=CourseRole.STUDENT)
     class Meta:
         unique_together = ('user', 'course',)
+
 class Resource(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -61,5 +64,4 @@ class Pin(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     pin = models.IntegerField()
-    def __str__(self):
-        return self.pin
+    
