@@ -5,9 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
-class Role(models.Model):
-    name = models.CharField(max_length=30)
-    
 class School(models.Model):
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=50)
@@ -27,7 +24,6 @@ class PrivacyPolicies_PrivacyPermissions(models.Model):
     privacyPermission = models.ForeignKey(PrivacyPermission, on_delete=models.CASCADE)
 class User(AbstractUser):
     school = models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
-    role = models.ForeignKey(Role, on_delete=models.CASCADE, blank=True, null=True)
     permissions = models.ForeignKey(PrivacyPolicy, on_delete=models.CASCADE, blank=True, null=True)
 class Course(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE)

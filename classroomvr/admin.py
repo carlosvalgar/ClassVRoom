@@ -76,10 +76,10 @@ class CustomUserAdmin(UserAdmin):
         if request.user.groups.filter(name="admin_centro").exists():
             return qs.filter(school=request.user.school)
 
-CustomUserAdmin.list_display += ('school', 'role', 'permissions')
-CustomUserAdmin.list_filter += ('school', 'role', 'permissions')
-CustomUserAdmin.fieldsets += ((None, {'fields': ['school','role', 'permissions']}),)
-CustomUserAdmin.add_fieldsets += ((None, {'fields': ['school', 'role', 'permissions']}),)
+CustomUserAdmin.list_display += ('school', 'permissions')
+CustomUserAdmin.list_filter += ('school', 'permissions')
+CustomUserAdmin.fieldsets += ((None, {'fields': ['school', 'permissions']}),)
+CustomUserAdmin.add_fieldsets += ((None, {'fields': ['school', 'permissions']}),)
 
 admin.site.register(User,CustomUserAdmin)
 admin.site.register(School,SchoolAdmin)
