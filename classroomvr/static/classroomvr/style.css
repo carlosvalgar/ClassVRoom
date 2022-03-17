@@ -1,0 +1,13 @@
+/* Header styles */
+#headerContainer{
+    width: auto;
+    height: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: red;
+}
+.headerContent{
+    width: 33.3%;
+    background-color: yellow;
+}

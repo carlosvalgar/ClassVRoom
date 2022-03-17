@@ -12,10 +12,14 @@ def indvidualQualification(request,courseid,taskid,userid):
 	alumn = get_object_or_404(User, pk=userid)
 	task = get_object_or_404(Task, pk=taskid, course=course.pk)
 	delivery = get_object_or_404(Delivery, task=task.pk, student=userid)
-	conext = {
+	context = {
         'Task' : task,
         'Delivery' : delivery,
         'Alumn' : alumn,
         'AlumnList' : alumnCourse
     }
-	return render(request, 'individualQualification.html',conext)
+	return render(request, 'individualQualification.html',context)
+
+
+def landingPage(request):
+	return render(request, 'landingPage.html')
