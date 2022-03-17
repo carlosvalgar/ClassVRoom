@@ -10,9 +10,12 @@ El equipo ha sido compuesto por 3 alumnos de DAW del instituto Esteve Terradas i
 
 * Carlos Fernández
   * [Github](https://github.com/bycarlos28) 
+  * [Discord: bycarlos28#9418]
 
 * Adrián Gomez
   * [Github](https://github.com/AdrianOrea) 
+  * [Github: Adgoor#0880]
 
 * Carlos Valenzuela
   * [Github](https://github.com/carlosvalgar) 
+  * [Discord: Carvagia#1404]
