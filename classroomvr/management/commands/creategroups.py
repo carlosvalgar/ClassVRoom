@@ -6,10 +6,8 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import Permission
 
 GROUPS = ['schoolAdmin', 'professor',]
-MODELS = ['course', 'delivery', 'inscription', 'pin', 'resource', 'school', 'task', 'user']
-ALL_PERMISSIONS = ['view', 'add', 'delete', 'change',]
-VIEW_PERMISSIONS = ['view',]
-VIEW_CHANGE_PERMISSIONS = ['view', 'change',]
+MODELS = ['course', 'delivery', 'subscription', 'resource', 'task',]
+PERMISSIONS = ['view', 'add', 'delete', 'change',]
 
 class Command(BaseCommand):
     help = 'Creates the permissions groups for users'
@@ -18,12 +16,7 @@ class Command(BaseCommand):
         for group in GROUPS:
             new_group, created = Group.objects.get_or_create(name=group)
             for model in MODELS:
-                if (group == 'schoolAdmin' and model == 'school'):
-                    addPermission(new_group, model, VIEW_CHANGE_PERMISSIONS)
-                elif (group == 'professor' and model == 'school'):
-                    addPermission(new_group, model, VIEW_PERMISSIONS)
-                else:
-                    addPermission(new_group, model, ALL_PERMISSIONS)
+                addPermission(new_group, model, PERMISSIONS)
         print("Created default group and permissions.")
 
 def addPermission (new_group, model, PERMISSIONS):
