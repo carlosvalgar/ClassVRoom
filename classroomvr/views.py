@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.http import HttpRequest
 from django.template import loader
+from django.contrib.auth.decorators import login_required
 from .models import *
 
 # Create your views here.
@@ -23,3 +24,16 @@ def indvidualQualification(request,courseid,taskid,userid):
 
 def landingPage(request):
 	return render(request, 'landingPage.html')
+
+def login(request):
+	return render(request, 'login.html')
+
+@login_required
+def dashboard(request):
+	alumn = request.user
+	alumnCourse = Inscription.objects.filter(user=request.user.pk)
+	context = {
+        'Alumn' : alumn,
+		'Cursos': alumnCourse,
+    }
+	return render(request, 'dashboard.html',context)
