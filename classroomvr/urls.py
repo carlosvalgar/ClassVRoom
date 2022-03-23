@@ -8,4 +8,5 @@ urlpatterns = [
     path('', views.landingPage, name='landingPage'),
     path('login', views.login, name='login'),
     path('dashboard', views.dashboard, name='dashboard'),
+    path('files/<str:filename>', views.downloadFile, name='download_file'),
 ]
