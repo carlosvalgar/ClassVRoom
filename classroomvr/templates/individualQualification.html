@@ -12,25 +12,25 @@
 		</div>
 		<div>
 		<label>Correo:</label>
-		<p name="correo">{{Alumn.email}}</p>
+		<p class="border-black border-2" name="correo">{{Alumn.email}}</p>
 		</div>
 		<div>
 		<label>Archivo:</label>
-		<p name="archivo"><a href="">{{Delivery.file}}</a></p>
+		<p class="border-black border-2" name="archivo"><a href="">{{Delivery.file}}</a></p>
 		</div>
 		<div>
 		<label>Puntuacion:</label>
-		<input type="number" id="score" min="0" max="10" value="{{Delivery.score}}">
+		<input class="border-black border-2" type="number" id="score" min="0" max="10" value="{{Delivery.score}}">
 		</div>
 		<div>
-		<label>Comentario profesor:</label>
-		<input type="text" id="comprof" value="{{Delivery.professorCommentary}}">
+		<label >Comentario profesor:</label>
+		<input class="border-black border-2" type="text" id="comprof" value="{{Delivery.professorCommentary}}">
 		</div>
 		<div>
 		<label>Comentario alumno:</label>
 		<p name="comAlum">{{Delivery.studentCommentary}}</p>
 		</div>
-		<input type="submit" name="" id="enviar">
+		<input class="border-black border-2" type="submit" name="" id="enviar">
 {% endblock body_data %}
 {% block js %}
 
