@@ -57,5 +57,5 @@ def downloadFile(request, filename=''):
 def update(request, deliveryid, score, comprof):
 	delivery = get_object_or_404(Delivery, pk=deliveryid)
 	delivery.score = score
-	delivery.professorCommentary = comprof
+	delivery.professor_commentary = comprof
 	delivery.save()
