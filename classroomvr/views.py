@@ -1,12 +1,16 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpRequest
 from django.template import loader
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic.edit import (UpdateView)
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
 import os
 import mimetypes
+
+# Comprobate role of actual user to acces.
+#def role_check(user):
+#	rolUser = get_object_or_404(Subscription, user=request.user, course=task.course)
 
 # Create your views here.
 @login_required(login_url="/login")
@@ -17,6 +21,9 @@ def indvidualQualification(request,taskid,userid):
 	delivery = get_object_or_404(Delivery, task=task.pk, student=userid)
 	listStudent = Subscription.objects.filter(course=task.course, course_role='STUDENT')
 	listStudentId = []
+
+	rolUser = get_object_or_404(Subscription, user=request.user, course=task.course)
+	courseName= get_object_or_404(Course, name=task.course)
 
 	for student in listStudent:
 		listStudentId.append(student.user.pk)
@@ -37,8 +44,11 @@ def indvidualQualification(request,taskid,userid):
 		'Delivery' : delivery,
 		'nextalumn' : nextStudent,
 		'prevalumn' : prevStudent,
+		'actualCourse': courseName,
+		'actualUserRol': rolUser,
 	}
-
+	if rolUser.course_role == 'STUDENT':
+		return redirect('dashboard')
 	return render(request, 'individualQualification.html',conext)
 
 def downloadFile(request, filename=''):
@@ -63,7 +73,10 @@ def update(request, deliveryid, score, comprof):
 	delivery.save()
 
 def landingPage(request):
-	return render(request, 'landingPage.html')
+	if request.user.is_authenticated:
+		return redirect('dashboard')
+	else:
+		return render(request, 'landingPage.html')
 
 def login(request):
 	return render(request, 'login.html')
@@ -72,7 +85,7 @@ def login(request):
 def dashboard(request):
 	if request.user.is_authenticated: 
 		alumn = request.user
-		alumnCourse = Inscription.objects.filter(user=request.user.pk)
+		alumnCourse = Subscription.objects.filter(user=request.user.pk)
 		context = {
 			'Alumn' : alumn,
 			'Cursos': alumnCourse,

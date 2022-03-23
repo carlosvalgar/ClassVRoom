@@ -130,4 +130,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'classroomvr.User'
 
+LOGIN_REDIRECT_URL='dashboard'
+LOGOUT_REDIRECT_URL='login'
 django_heroku.settings(locals())

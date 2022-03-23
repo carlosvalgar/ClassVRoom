@@ -51,7 +51,7 @@ class CustomUserAdmin(UserAdmin):
 
 CustomUserAdmin.list_display += ('school', 'permissions')
 CustomUserAdmin.fieldsets += ((None, {'fields': ['school', 'permissions']}),)
-CustomUserAdmin.add_fieldsets += ((None, {'fields': ['school', 'permissions']}),)
+CustomUserAdmin.add_fieldsets += ((None, {'fields': ['school', 'permissions','email']}),)
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(School)
