@@ -23,6 +23,8 @@ def indvidualQualification(request,taskid,userid):
 	listStudentId = []
 
 	rolUser = get_object_or_404(Subscription, user=request.user, course=task.course)
+	nameUser = get_object_or_404(User, email=request.user)
+	print(nameUser)
 	courseName= get_object_or_404(Course, name=task.course)
 
 	for student in listStudent:
@@ -46,6 +48,7 @@ def indvidualQualification(request,taskid,userid):
 		'prevalumn' : prevStudent,
 		'actualCourse': courseName,
 		'actualUserRol': rolUser,
+		'actualUserName': nameUser,
 	}
 	if rolUser.course_role == 'STUDENT':
 		return redirect('dashboard')
