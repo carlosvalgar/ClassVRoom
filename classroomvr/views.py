@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
+@login_required(login_url="/login")
 @csrf_exempt
 def indvidualQualification(request,taskid,userid):
     alumn = get_object_or_404(User, pk=userid)
@@ -49,7 +50,7 @@ def landingPage(request):
 def login(request):
 	return render(request, 'login.html')
 
-@login_required
+@login_required(login_url="/login")
 def dashboard(request):
 	if request.user.is_authenticated: 
 		alumn = request.user
