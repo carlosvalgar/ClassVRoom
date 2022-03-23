@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpRequest
 from django.template import loader
+from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import (UpdateView)
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
@@ -8,7 +9,8 @@ import os
 import mimetypes
 
 # Create your views here.
-
+@login_required(login_url="/login")
+@csrf_exempt
 def indvidualQualification(request,taskid,userid):
 	alumn = get_object_or_404(User, pk=userid)
 	task = get_object_or_404(Task, pk=taskid)
@@ -59,3 +61,20 @@ def update(request, deliveryid, score, comprof):
 	delivery.score = score
 	delivery.professor_commentary = comprof
 	delivery.save()
+
+def landingPage(request):
+	return render(request, 'landingPage.html')
+
+def login(request):
+	return render(request, 'login.html')
+
+@login_required(login_url="/login")
+def dashboard(request):
+	if request.user.is_authenticated: 
+		alumn = request.user
+		alumnCourse = Inscription.objects.filter(user=request.user.pk)
+		context = {
+			'Alumn' : alumn,
+			'Cursos': alumnCourse,
+		}
+	return render(request, 'dashboard.html',context)

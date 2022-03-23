@@ -27,7 +27,9 @@ class PrivacyPolicies_PrivacyPermissions(models.Model):
 class User(AbstractUser):
     school = models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
     permissions = models.ForeignKey(PrivacyPolicy, on_delete=models.CASCADE, blank=True, null=True)
-
+    email = models.EmailField(_('email address'), unique=True)
+    USERNAME_FIELD ='email'
+    REQUIRED_FIELDS = ['username']
 class Course(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
