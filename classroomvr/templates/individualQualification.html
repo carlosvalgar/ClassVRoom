@@ -8,9 +8,9 @@
 		div{display: flex;}
 	</style>
 	<script
-			  src="https://code.jquery.com/jquery-3.6.0.js"
-			  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-			  crossorigin="anonymous"></script>
+			src="https://code.jquery.com/jquery-3.6.0.js"
+			integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+			crossorigin="anonymous"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$('#enviar').on('click',function(){
@@ -18,11 +18,11 @@
 				let comprof = $('#comprof').val();
 				let deliveryid = {{Delivery.pk}};
 				$.ajax({
-		            url: "http://127.0.0.1:8000/update/"+deliveryid+"/"+score+"/"+comprof,
-	    			method : 'POST',
-		        })
-		    })
-		})
+					url: "http://127.0.0.1:8000/update/"+deliveryid+"/"+score+"/"+comprof,
+					method : 'POST',
+				});
+			});
+		});
 	</script>
 </head>
 <body>
@@ -47,11 +47,11 @@
 		</div>
 		<div>
 		<label>Comentario profesor:</label>
-		<input type="text" id="comprof" value="{{Delivery.professorCommentary}}">
+		<input type="text" id="comprof" value="{{Delivery.professor_commentary}}">
 		</div>
 		<div>
 		<label>Comentario alumno:</label>
-		<p name="comAlum">{{Delivery.studentCommentary}}</p>
+		<p name="comAlum">{{Delivery.student_commentary}}</p>
 		</div>
 		<input type="submit" name="" id="enviar">
 </body>
