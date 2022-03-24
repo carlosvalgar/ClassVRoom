@@ -24,14 +24,10 @@ def indvidualQualification(request,taskid,userid):
 
 	rolUser = get_object_or_404(Subscription, user=request.user, course=task.course)
 	nameUser = get_object_or_404(User, email=request.user)
-	print(nameUser)
 	courseName= get_object_or_404(Course, name=task.course)
 
 	for student in listStudent:
 		listStudentId.append(student.user.pk)
-	
-	print(len(listStudentId))
-	print(listStudent)
 
 	if listStudentId.index(userid) == len(listStudentId)-1:
 		nextStudent = listStudentId[0]
