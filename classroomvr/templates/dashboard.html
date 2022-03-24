@@ -1,0 +1,13 @@
+{% extends 'base_template.html' %}
+{% load static %}
+{% block title %} Dashboard {% endblock title %}
+{% block body_data %}
+<div class="w-full h-[79.5%] bg-[#ffa76c] absolute m-auto absolute flex justify-center align-center">
+    <div class="w-2/5 bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center justify-center">
+        {% for obj in Cursos %}
+        <p class="mb-6 text-3xl">{{ obj.course }}</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock body_data %}

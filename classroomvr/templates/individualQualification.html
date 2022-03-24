@@ -1,0 +1,55 @@
+{% extends 'base_template.html' %}
+{% load static %}
+{% block title %} Ejercicio {% endblock title %}
+{% block body_data %}
+	<script
+		src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#enviar').on('click',function(){
+                let score = $('#score').val();
+                let comprof = $('#comprof').val();
+                let deliveryid = {{ Delivery.pk }};
+                $.ajax({
+                    url: "http://127.0.0.1:8000/update/"+deliveryid+"/"+score+"/"+comprof,
+                    method : 'POST',
+                })
+            })
+        })
+    </script>
+	<button><a href="http://127.0.0.1:8000/exercise/{{Task.pk}}/{{prevalumn}}">Anterior</a></button>
+	<button><a href="http://127.0.0.1:8000/exercise/{{Task.pk}}/{{nextalumn}}">Siguiente</a></button>
+	<h1>{{ Task }}</h1>
+		<div>	
+			<label>Alumno:</label>
+			<p name="alumno">{{Alumn}}</p>
+		</div>
+		<div>
+		<label>Correo:</label>
+		<p class="border-black border-2" name="correo">{{Alumn.email}}</p>
+		</div>
+		<div>
+		<label>Archivo:</label>
+		<p class="border-black border-2" name="archivo"><a href="">{{Delivery.file}}</a></p>
+		</div>
+		<div>
+		<label>Puntuacion:</label>
+		<input class="border-black border-2" type="number" id="score" min="0" max="10" value="{{Delivery.score}}">
+		</div>
+		<div>
+		<label >Comentario profesor:</label>
+		<input class="border-black border-2" type="text" id="comprof" value="{{Delivery.professor_commentary}}">
+		</div>
+		<div>
+		<label>Comentario alumno:</label>
+		<p name="comAlum">{{Delivery.student_commentary}}</p>
+		</div>
+		<input class="border-black border-2" type="submit" name="" id="enviar">
+{% endblock body_data %}
+{% block js %}
+{% endblock js %}
+
+
+
