@@ -5,26 +5,19 @@ from django.urls import path
 from rest_framework.authtoken.models import Token
 from .models import User, Course, Subscription, Resource, Task
 from django.contrib.auth.hashers import check_password
-
-
+import json
 
 @api_view(['GET'])
 def login(request):
-    email = request.GET['email']
-    password = request.GET['password']
-    if email == "":
-        return JsonResponse({
-            "status"    : 'ERROR',
-            "message"   : 'email is required',
-            })
+    request_data = json.loads(request.body)
     try:
-        user = User.objects.get(email=email)
+        user = User.objects.get(email=request_data['email'])
     except:
         return JsonResponse({
             "status"    : 'ERROR',
             "message"   : 'Wrong credentials.',
             })
-    if check_password(user.password,password) == False:
+    if check_password(user.password,request_data['password']) == False:
         return JsonResponse({
             "status"    : 'ERROR',
             "message"   : 'Wrong credentials',
@@ -52,9 +45,9 @@ def logout(request):
 
 @api_view(['GET'])
 def get_courses(request):
-    sessionToken = request.GET['session_token']
+    request_data = json.loads(request.body)
     try:
-        token = Token.objects.get(key=sessionToken)
+        token = Token.objects.get(key=request_data['session_token'])
         user = User.objects.get(email=token.user)
         Subscriptions = Subscription.objects.filter(user=user.pk)
         courseList=[]
@@ -91,20 +84,20 @@ def get_courses(request):
 @api_view(['GET'])
 def get_courses_detail(request):
     sessionToken = request.GET['session_token']
-    courseId = request.GET['courseID']
-    if courseId.isnumeric() != True:
+    request_data = json.loads(request.body)
+    if request_data['courseID'].isnumeric() != True:
         return JsonResponse({
                 "status"    : 'ERROR',
                 "message"   : 'courseID is required.',
                 })
-    token = Token.objects.get(key=sessionToken)
-    roluser = Subscription.objects.get(course=courseId, user=token.user.pk)
+    token = Token.objects.get(key=request_data['session_token'])
+    roluser = Subscription.objects.get(course=request_data['courseID'], user=token.user.pk)
     if roluser.course_role == 'STUDENT':
         return JsonResponse({
                 "status"    : 'ERROR',
                 "message"   : 'Insufficient permissions.',
                 })
-    course = Course.objects.get(pk=courseId)
+    course = Course.objects.get(pk=request_data['courseID'])
     resource = Resource.objects.filter(course=course.pk)
     resourceList = []
     for recurso in resource:
