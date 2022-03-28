@@ -8,6 +8,7 @@ from .models import *
 import os
 import mimetypes
 
+from rest_framework import status
 # Comprobate role of actual user to acces.
 #def role_check(user):
 #	rolUser = get_object_or_404(Subscription, user=request.user, course=task.course)
@@ -90,3 +91,5 @@ def dashboard(request):
 			'Cursos': alumnCourse,
 		}
 	return render(request, 'dashboard.html',context)
+
+
