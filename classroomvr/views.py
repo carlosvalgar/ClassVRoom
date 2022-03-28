@@ -1,3 +1,4 @@
+from urllib import response
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpRequest
 from django.template import loader
@@ -90,3 +91,6 @@ def dashboard(request):
 			'Cursos': alumnCourse,
 		}
 	return render(request, 'dashboard.html',context)
+
+
+
