@@ -33,6 +33,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'classroomvr.apps.ClassroomvrConfig',
+    'rest_framework',
+    'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -133,3 +135,11 @@ AUTH_USER_MODEL = 'classroomvr.User'
 LOGIN_REDIRECT_URL='dashboard'
 LOGOUT_REDIRECT_URL='login'
 django_heroku.settings(locals())
+
+# RestFramework
+REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}

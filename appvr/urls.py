@@ -15,8 +15,53 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from classroomvr.models import *
+from classroomvr.views import *
+from rest_framework import routers, serializers, viewsets
+from django.http import JsonResponse
+from rest_framework.authtoken import views as apiviews
+
+# Serializers define the API representation.
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['url', 'username', 'email', 'is_staff',]
+
+# ViewSets define the view behavior.
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class SchoolSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = School
+        fields = ['url', 'name',]
+
+class SchoolViewSet(viewsets.ModelViewSet):
+    queryset = School.objects.all()
+    serializer_class = SchoolSerializer
+
+class CourseSerializer(serializers.HyperlinkedModelSerializer):
+    school = SchoolSerializer()
+    class Meta:
+        model = Course
+        fields = ['url', 'name', 'school',]
+
+class CourseViewSet(viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'get_courses', CourseViewSet)
+router.register(r'schools', SchoolViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('classroomvr.urls')),
+    path('api/', include(router.urls)),
+    path('api/', include('classroomvr.api')),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api-token-auth/', apiviews.obtain_auth_token),
 ]

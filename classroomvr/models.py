@@ -63,6 +63,7 @@ class Task(models.Model):
     name = models.CharField(max_length=100)
     exercise_description = models.CharField(max_length=500)
     type = models.CharField(max_length=30, choices=TaskType.choices, default=TaskType.NORMAL)
+    exerciseVersion = models.IntegerField()
     def __str__(self):
         return self.name
 
@@ -79,5 +80,3 @@ class Pin(models.Model):
     exercise = models.ForeignKey(Task, on_delete=models.CASCADE)
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     pin = models.IntegerField()
-    def __str__(self):
-        return self.pin
