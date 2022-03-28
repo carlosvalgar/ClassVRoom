@@ -67,10 +67,14 @@ class Task(models.Model):
         return self.name
 
 class Delivery(models.Model):
+    class DeliveryStatusType(models.TextChoices):
+        DELIVERED = 'DELIVERED', _('Delivered')
+        NO_DELIVERED = 'NO_DELIVERED', _('No delivered')
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     delivery_date = models.DateTimeField()
     file = models.FileField(upload_to='files')
+    delivery_status = models.CharField(max_length=40, choices=DeliveryStatusType.choices, default=DeliveryStatusType.NO_DELIVERED)
     score = models.IntegerField()
     professor_commentary = models.CharField(max_length=500)
     student_commentary = models.CharField(max_length=500)

@@ -92,12 +92,11 @@ def dashboard(request):
 	return render(request, 'dashboard.html',context)
 
 @login_required(login_url="/login")
-def taskAllAlumns(request):
-	if request.user.is_authenticated: 
-		alumn = request.user
-		alumnCourse = Subscription.objects.filter(user=request.user.pk)
-		context = {
-			'Alumn' : alumn,
-			'Cursos': alumnCourse,
-		}
+def taskAllAlumns(request, taskid):
+	task = get_object_or_404(Task, pk=taskid)
+	delivery = Delivery.objects.filter(task=task.id)
+	context = {
+		'Tarea': task,
+		'Entrega': delivery,
+	}
 	return render(request, 'taskAllAlumns.html',context)

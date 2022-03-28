@@ -1,9 +1,41 @@
 {% extends 'base_template.html' %}
 {% load static %}
-{% block title %} Ejercicio {% endblock title %}
+{% block title %} Entregas alumnos {% endblock title %}
 {% block body_data %}
-<div class="w-full min-h-[80vh] bg-[#ffa76c] m-auto flex justify-center align-center overflow-auto">
-    <div class="w-2/5 bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center justify-center">
+<div class="w-full min-h-[80vh] bg-[#f9d7c0] m-auto flex justify-center align-center overflow-auto">
+    <div class="w-[95%] bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center">
+        {% include 'breadcrums.html' %}
+        <h2 class="text-3xl font-bold pt-5 mb-6">{{ Tarea.name }}</h2>
+        <br>
+        {% for obj in Entrega %}
+            <div class="w-[90%] bg-[#eaeaea] border-2 border-black rounded-2xl mb-5 flex flex-row">
+                <div class="w-[25%] pl-3 ">
+                    <p class="text-xl font-semibold pb-6 underline"> Nom </p>
+                    {{ obj.student.username }}
+                </div>
+                <div class="w-[14.5%] pl-3 ">
+                    <p class="text-xl font-semibold pb-6 underline">Email</p>
+                    {{ obj.student.email }}
+                </div>
+                <div class="w-[14.5%] pl-3 ">
+                    <p class="text-xl font-semibold pb-6 underline">Estat de la tramesa</p>
+                    {{ obj.delivery_status }}
+                </div>
+                <div class="w-[14.5%] pl-3 ">
+                    <p class="text-xl font-semibold pb-6 underline">Data de la tramesa</p>
+                    {{ obj.delivery_date }}
+                </div>
+                <div class="w-[14.5%] pl-3 ">
+                    <p class="text-xl font-semibold pb-6 underline">Arxiu</p>
+                    {{ obj.file }}
+                </div>
+                <div class="w-[21%] pr-3 text-right ">
+                    <p class="text-xl font-semibold pb-6 underline" >Qualificació</p>
+                    {{ obj.score }}
+                </div>    
+            </div>
+            <br>
+        {% endfor %}
         
     </div>
 </div>
