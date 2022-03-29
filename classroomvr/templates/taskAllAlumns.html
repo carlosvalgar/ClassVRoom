@@ -8,10 +8,10 @@
         <h2 class="text-3xl font-bold pt-5 mb-6">{{ Tarea.name }}</h2>
         <br>
         {% for Delivery in Entrega %}
-            <div class="w-[90%] bg-[#eaeaea] border-2 border-black rounded-2xl mb-5 flex flex-row">
+            <div  id="{{ Delivery.student.username }}" class="w-[90%] bg-[#eaeaea] border-2 border-black rounded-2xl mb-5 flex flex-row">
                 <div class="pl-5 pt-2 w-full">
                     <p class="text-xl font-semibold pb-2 underline"> Nom </p>
-                    <p id="studentName">{{ Delivery.student.username }}</p>
+                    <p>{{ Delivery.student.username }}</p>
                 </div>
                 <div class="pl-3 pt-2 w-full">
                     <p class="text-xl font-semibold pb-2 underline">Email</p>
@@ -64,7 +64,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('.enviar').on('click',function(){
-                let name = $('#studentName').val();
+                let name = $(this).parent().parent().attr('id');
                 let score = $('#'+name+'score').val();
                 let comprof = $('#'+name+'comprof').val();
                 let deliveryid = $(this).parent().attr('deliverypk');
