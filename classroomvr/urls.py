@@ -10,5 +10,6 @@ urlpatterns = [
     path('login', LoginView.as_view(template_name='login.html'), name='login'),
     path('logout', LogoutView.as_view(template_name='login.html'), name='logout'),
     path('dashboard', views.dashboard, name='dashboard'),
+    path('task-deliveries/<int:taskid>', views.taskAllAlumns, name='taskAllAlumns'),
     path('files/<str:filename>', views.downloadFile, name='download_file'),
 ]
