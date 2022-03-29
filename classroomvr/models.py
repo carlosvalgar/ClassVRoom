@@ -1,8 +1,6 @@
-from re import M
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
-
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -56,13 +54,17 @@ class Resource(models.Model):
         return self.name
 
 class Task(models.Model):
-    class TaskType(models.TextChoices):
-        VR = 'VR', _('VR')
-        NORMAL = 'NORMAL', _('Normal')
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     exercise_description = models.CharField(max_length=500)
-    type = models.CharField(max_length=30, choices=TaskType.choices, default=TaskType.NORMAL)
+    def __str__(self):
+        return self.name
+
+class VRTask(models.Model):
+    name = models.CharField(max_length=100)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    exercise_description = models.CharField(max_length=500)
+    exercise_version = models.IntegerField()
     def __str__(self):
         return self.name
 
@@ -79,9 +81,19 @@ class Delivery(models.Model):
     professor_commentary = models.CharField(max_length=500)
     student_commentary = models.CharField(max_length=500)
 
+class VRDelivery(models.Model):
+    vr_task  = models.ForeignKey(VRTask, on_delete=models.CASCADE)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    day_exercise_was_done = models.DateTimeField(auto_now_add=True, blank=True)
+    passed_items = models.IntegerField()
+    failed_items = models.IntegerField()
+    score = models.IntegerField()
+    performance_data = models.FileField(upload_to='files')
+    exercise_version = models.IntegerField()
+    professor_commentary = models.CharField(max_length=500)
+    student_commentary = models.CharField(max_length=500)
+
 class Pin(models.Model):
-    exercise = models.ForeignKey(Task, on_delete=models.CASCADE)
+    vr_task = models.ForeignKey(VRTask, on_delete=models.CASCADE)
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     pin = models.IntegerField()
-    def __str__(self):
-        return self.pin

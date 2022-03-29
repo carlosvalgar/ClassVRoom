@@ -1,3 +1,4 @@
+from urllib import response
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpRequest
 from django.template import loader
@@ -83,11 +84,10 @@ def login(request):
 @login_required(login_url="/login")
 def dashboard(request):
 	if request.user.is_authenticated: 
-		alumn = request.user
-		alumnCourse = Subscription.objects.filter(user=request.user.pk)
+		userSubscriptions = Subscription.objects.filter(user=request.user.pk)
+		userCourses = Course.objects.filter(subscription__in=userSubscriptions)
 		context = {
-			'Alumn' : alumn,
-			'Cursos': alumnCourse,
+			'Courses': userCourses,
 		}
 	return render(request, 'dashboard.html',context)
 

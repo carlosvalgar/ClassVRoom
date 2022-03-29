@@ -5,13 +5,13 @@
 <div class="w-full min-h-[80vh] bg-[#f9d7c0] m-auto flex justify-center align-center">
     <div class="w-2/5 bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center">
         {% include 'breadcrums.html' %}
-        {% for obj in Cursos %}
-            <div class="w-[80%] mt-6 border-2 border-black rounded-2xl">
-                <a class="pl-2 pd-2 mb-6 text-3xl" href="#">{{ obj.course }}</a>
-                
-            </div>
+        {% for Course in Courses %}
+            <a class="w-[80%] mt-6 flex justify-center border-black border-2 border-radius rounded-2xl hover:bg-[#f9d7c059] transition-colors" href="/course/{{ Course.pk }}">
+                    <p class="pl-2 pd-2 text-3xl my-6"> {{ Course.name }} </p>
+            </a>
         {% endfor %}
     </div>
 </div>
 
 {% endblock body_data %}
+

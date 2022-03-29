@@ -3,16 +3,14 @@
 {% block title %} Ejercicio {% endblock title %}
 {% block body_data %}
 <div class="w-full min-h-[80vh] bg-[#f9d7c0] m-auto flex justify-center align-center overflow-auto">
-    <div class="w-2/5 h-auto bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center ">
+    <div class="w-2/5 h-auto bg-white mt-6 mb-6 pb-[30px] border-2 border-black rounded-2xl flex flex-col items-center ">
 		{% include 'breadcrums.html' %}
-		<div class="w-full mt-7 flex">
+		<div class="w-full mt-7 flex justify-between">
 			<button class="ml-10 bg-white border-[3px] border-black border-radius rounded-xl w-24 h-9 pl-1 self-center hover:bg-[#ffa76c] hover:text-white"><a href="http://127.0.0.1:8000/exercise/{{Task.pk}}/{{prevalumn}}"><i sizes="32x32" class="fa-solid fa-arrow-left "></i></a></button>
-			<button class="mr-10 ml-auto bg-white border-[3px] border-black border-radius rounded-xl w-24 h-9 pl-1 self-center hover:bg-[#ffa76c] hover:text-white"><a href="http://127.0.0.1:8000/exercise/{{Task.pk}}/{{nextalumn}}"><i class="fa-solid fa-arrow-right"></i></a></button>
-		</div>
-		<div class="w-full flex justify-center mt-4 ">
 			<h1 class="font-bold text-3xl">{{ Task }}</h1>
+			<button class="mr-10 bg-white border-[3px] border-black border-radius rounded-xl w-24 h-9 pl-1 self-center hover:bg-[#ffa76c] hover:text-white"><a href="http://127.0.0.1:8000/exercise/{{Task.pk}}/{{nextalumn}}"><i class="fa-solid fa-arrow-right"></i></a></button>
 		</div>
-			<div class="w-3/4 flex flex-col mt-16 ">
+			<div class="w-3/4 flex flex-col mt-10 ">
 
 				<div class="w-full flex flex-row ">
 					<div class="w-[43%] flex">
