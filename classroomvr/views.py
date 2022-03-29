@@ -100,3 +100,24 @@ def taskAllAlumns(request, taskid):
 		'Entrega': delivery,
 	}
 	return render(request, 'taskAllAlumns.html',context)
+
+@login_required(login_url="/login")
+def allTasksPerCoursePerStudent(request, course_id):
+	if not Subscription.objects.filter(course = course_id, course_role = 'STUDENT', user = request.user).exists():
+		return redirect('dashboard')
+	course = get_object_or_404(Course, pk = course_id)
+	professor = Subscription.objects.get(course = course, course_role = "PROFESSOR").user
+	tasks = Task.objects.all().filter(course = course)
+	student_tasks_deliveries = []
+	print(tasks)
+	for task in tasks:
+		print(task)
+		delivery = Delivery.objects.get(task = task, student = request.user)
+		student_tasks_deliveries.append({"task" : task, "delivery" : delivery})
+	context = {
+		'course'					: course,
+		'professor'					: professor,
+		'student'					: request.user,
+		'student_tasks_deliveries'	: student_tasks_deliveries,
+	}
+	return render(request, 'allTasksPerCoursePerStudent.html',context)
