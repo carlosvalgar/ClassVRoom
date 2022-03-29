@@ -12,4 +12,5 @@ urlpatterns = [
     path('dashboard', views.dashboard, name='dashboard'),
     path('task-deliveries/<int:taskid>', views.taskAllAlumns, name='taskAllAlumns'),
     path('files/<str:filename>', views.downloadFile, name='download_file'),
+    path('course/<int:course_id>/tasks', views.allTasksPerCoursePerStudent, name='all_tasks_per_course_per_student'),
 ]
