@@ -1,0 +1,30 @@
+{% extends 'base_template.html' %}
+{% load static %}
+{% block title %} Cursos {% endblock title %}
+{% block body_data %}
+<div class="w-full min-h-[80vh] bg-[#f9d7c0] flex justify-center align-center">
+    <div class="w-2/5 bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center py-6">
+        <div class="w-[70%] bg-[#f9d7c0] text-2xl px-6 mt-5 py-2 border-2 border-black flex flex-col items-center rounded-2xl mb-6">
+            <h2 class="my-5 w-[90%]">Recursos</h2>
+            {% for resource in resources %}
+                <a href="/{{resource.file}}" class="w-[90%] min-h-[30px] bg-[#eaeaea] text-center px-6 py-2 border-2 border-black rounded-2xl mb-6 break-words hover:bg-[#ffa76c] hover:text-white transition-colors">{{resource}}</a>
+            {% endfor %}
+        </div>
+        <div class="w-[70%] bg-[#f9d7c0] text-2xl px-6 mt-5 py-2 border-2 border-black flex flex-col items-center rounded-2xl mb-6">
+            <h2 class="my-5 w-[90%]">Ejercicios</h2>
+            {% for task in tasks %}
+                <a class="w-[90%] min-h-[30px] bg-[#eaeaea] text-center px-6 py-2 border-2 border-black rounded-2xl mb-6 break-words hover:bg-[#ffa76c] hover:text-white transition-colors"
+                    href="http://127.0.0.1:8000/exercise/{{task.pk}}/{{firstId.user.pk}}">{{task}}</a>
+            {% endfor %}
+        </div>
+        <div class="w-[70%] bg-[#f9d7c0] text-2xl px-6 mt-5 py-2 border-2 border-black flex flex-col items-center rounded-2xl mb-6">
+            <h2 class="my-5 w-[90%]">Ejercicios VR</h2>
+            {% for taskvr in vrTasks %}
+                <div class="w-[90%] min-h-[30px] bg-[#eaeaea] text-center px-6 py-2 border-2 border-black rounded-2xl mb-6 break-words">
+                    <p>{{taskvr}}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock body_data %}

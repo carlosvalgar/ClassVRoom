@@ -1,0 +1,15 @@
+<div class="w-[90%] border-b-2 border-black min-h-[60px] flex flex-row items-center">
+    {% for breadcrumb in Breadcrumbs %}
+        {% if breadcrumb.url == '' %}
+            <p class="font-bold">{{ breadcrumb.name}}</p>
+        {% else %}
+            <a href="{{ breadcrumb.url }}" class="text-orange-600 hover:text-orange-700 active:text-orange-900 visited:text-orange-400">{{ breadcrumb.name }}</a>
+        {% endif %}
+        {% with Breadcrumbs|last as lastBreadcrumb %}
+            {% if breadcrumb.url != lastBreadcrumb.url %}    
+                <p class=" mx-3 ">/</p>
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+
+</div>

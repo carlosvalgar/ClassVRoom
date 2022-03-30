@@ -9,6 +9,7 @@ from .models import *
 import os
 import mimetypes
 
+from rest_framework import status
 # Comprobate role of actual user to acces.
 #def role_check(user):
 #	rolUser = get_object_or_404(Subscription, user=request.user, course=task.course)
@@ -25,7 +26,7 @@ def indvidualQualification(request,taskid,userid):
 
 	rolUser = get_object_or_404(Subscription, user=request.user, course=task.course)
 	nameUser = get_object_or_404(User, email=request.user)
-	courseName= get_object_or_404(Course, name=task.course)
+	course= get_object_or_404(Course, name=task.course)
 
 	for student in listStudent:
 		listStudentId.append(student.user.pk)
@@ -37,19 +38,26 @@ def indvidualQualification(request,taskid,userid):
 
 	prevStudent = listStudentId[listStudentId.index(userid) - 1]
 
-	conext = {
+	breadcrumbs = [
+		{'url':'/dashboard','name':'Inicio'},
+		{'url':'/course/{}'.format(course.pk),'name':course.name},
+		{'url':'','name':task.name},
+	]
+	
+	context = {
 		'Task' : task,
 		'Alumn' : alumn,
 		'Delivery' : delivery,
 		'nextalumn' : nextStudent,
 		'prevalumn' : prevStudent,
-		'actualCourse': courseName,
+		'actualCourse': course,
 		'actualUserRol': rolUser,
 		'actualUserName': nameUser,
+		'Breadcrumbs': breadcrumbs,
 	}
 	if rolUser.course_role == 'STUDENT':
-		return redirect('dashboard')
-	return render(request, 'individualQualification.html',conext)
+		return render(request, 'individualQualificationStudent.html',context)
+	return render(request, 'individualQualification.html',context)
 
 def downloadFile(request, filename=''):
 	if filename != '':
@@ -84,13 +92,70 @@ def login(request):
 @login_required(login_url="/login")
 def dashboard(request):
 	if request.user.is_authenticated: 
-		alumn = request.user
-		alumnCourse = Subscription.objects.filter(user=request.user.pk)
+		userSubscriptions = Subscription.objects.filter(user=request.user.pk)
+		userCourses = Course.objects.filter(subscription__in=userSubscriptions)
 		context = {
-			'Alumn' : alumn,
-			'Cursos': alumnCourse,
+			'Courses': userCourses,
 		}
 	return render(request, 'dashboard.html',context)
 
+@login_required(login_url="/login")
+def courses(request,courseID):
+	userRol = Subscription.objects.filter(course=courseID, user=request.user.pk)[0]
+	resources = Resource.objects.filter(course=courseID)
+	tasks = Task.objects.filter(course=courseID)
+	vrTasks = VRTask.objects.filter(course=courseID)
+	firstId = Subscription.objects.filter(course=courseID,course_role='STUDENT')[0]
+	context = {
+		'firstId'	: firstId,
+		'userRol'	:	userRol,
+		'resources'	: resources,
+		'tasks'	: tasks,
+		'vrTasks'	: vrTasks
+	}
+	return render(request, 'courses.html',context)
+def taskAllAlumns(request, taskid):
+	task = get_object_or_404(Task, pk=taskid)
+	delivery = Delivery.objects.filter(task=task.id)
+	course = Course.objects.get(pk=task.course.pk)
 
+	breadcrumbs = [
+		{'url':'/dashboard','name':'Inicio'},
+		{'url':'/course/{}'.format(course.pk),'name':course.name},
+		{'url':'','name':task.name},
+	]
 
+	context = {
+		'Tarea': task,
+		'Entrega': delivery,
+		'Breadcrumbs':breadcrumbs,
+		'Course':course.name,
+	}
+	return render(request, 'taskAllAlumns.html',context)
+
+@login_required(login_url="/login")
+def allTasksPerCoursePerStudent(request, course_id):
+	if not Subscription.objects.filter(course = course_id, course_role = 'STUDENT', user = request.user).exists():
+		return redirect('dashboard')
+	course = get_object_or_404(Course, pk = course_id)
+	professor = Subscription.objects.get(course = course, course_role = "PROFESSOR").user
+	tasks = Task.objects.all().filter(course = course)
+	student_tasks_deliveries = []
+	for task in tasks:
+		delivery = Delivery.objects.get(task = task, student = request.user)
+		student_tasks_deliveries.append({"task" : task, "delivery" : delivery})
+	
+	breadcrumbs = [
+		{'url':'/dashboard','name':'Inicio'},
+		{'url':'/course/{}'.format(course.pk),'name':course.name},
+		{'url':'','name':'Todas las tareas'},
+	]
+
+	context = {
+		'course'					: course,
+		'professor'					: professor,
+		'student'					: request.user,
+		'student_tasks_deliveries'	: student_tasks_deliveries,
+		'Breadcrumbs'				: breadcrumbs,
+	}
+	return render(request, 'allTasksPerCoursePerStudent.html',context)
