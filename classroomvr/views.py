@@ -43,7 +43,7 @@ def indvidualQualification(request,taskid,userid):
 		{'url':'/course/{}'.format(course.pk),'name':course.name},
 		{'url':'','name':task.name},
 	]
-
+	
 	context = {
 		'Task' : task,
 		'Alumn' : alumn,
@@ -56,7 +56,7 @@ def indvidualQualification(request,taskid,userid):
 		'Breadcrumbs': breadcrumbs,
 	}
 	if rolUser.course_role == 'STUDENT':
-		return redirect('dashboard')
+		return render(request, 'individualQualificationStudent.html',context)
 	return render(request, 'individualQualification.html',context)
 
 def downloadFile(request, filename=''):
