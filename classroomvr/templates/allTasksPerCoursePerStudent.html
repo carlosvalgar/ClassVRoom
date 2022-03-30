@@ -1,0 +1,57 @@
+{% extends 'base_template.html' %}
+{% load static %}
+{% block title %} Calificaciones {% endblock title %}
+{% block body_data %}
+<div class="w-full min-h-[80vh] bg-[#f9d7c0] flex justify-center align-center">
+    <div class="w-[90%] bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center">
+        {% include 'breadcrumbs.html' %}
+        <h1 class="text-3xl my-6">Informe de usuario - {{ student.username }}</h1>
+        <div class="w-[90%] bg-[#f9d7c0] text-2xl text-center px-6 py-2 border-2 border-black rounded-2xl mb-6 flex flex-row break-words">
+            <div class="w-[20%]" >
+                <p>Elemento a calificar</p>
+            </div>
+            <div class="w-[15%]" >
+                <p>Estado</p>
+            </div>
+            <div class="w-[20%]">
+                <p>Archivo</p>
+            </div>
+            <div class="w-[15%]">
+                <p>Calificación</p>
+            </div>
+            <div class="w-[30%]">
+                <p>Comentario</p>
+            </div> 
+        </div>
+        {% for task_delivery in student_tasks_deliveries %}
+            <div id="{{ Delivery.student.username }}" class="w-[90%] min-h-[100px] bg-[#eaeaea] text-center px-6 py-2 border-2 border-black rounded-2xl mb-6 flex flex-row break-words">
+                <div class="w-[20%] flex items-center justify-center">
+                    <a href="/exercise/{{task_delivery.task.pk}}/{{student.pk}}">{{ task_delivery.task.name }}</a>
+                </div>
+                <div class="w-[15%] flex items-center justify-center">
+                    <p>
+                        {% if task_delivery.delivery.delivery_status == "DELIVERED" %}
+                            Entregado
+                        {% else %}
+                            Sin entregar
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="w-[20%] flex items-center justify-center">
+                    <a href="/{{task_delivery.delivery.file}}" class="underline text-orange-600 break-all hover:text-orange-700 active:text-orange-900 visited:text-orange-400">{{task_delivery.delivery.file}}</a>
+                </div>
+                <div class="w-[15%] flex items-center justify-center">
+                    <p>{{task_delivery.delivery.score}}</p>
+                </div>
+                <div class="w-[30%] flex items-center justify-center">
+                    <p>
+                        {{task_delivery.delivery.professor_commentary}}
+                    </p>
+                </div> 
+            </div>
+        {% endfor %}
+        
+        
+    </div>
+</div>
+{% endblock body_data %}

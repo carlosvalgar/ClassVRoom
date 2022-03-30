@@ -2,20 +2,52 @@
 {% load static %}
 {% block title %} Login {% endblock title %}
 {% block body_data %}
-<div class="w-full h-[79.5%] bg-[#ffa76c] absolute m-auto absolute flex justify-center align-center">
+<div class="w-full min-h-[80vh] bg-[#f9d7c0] m-auto flex justify-center align-center">
     <div class="w-2/5 bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center ">
-        <div>
-            <img src="{% static 'classroomvr\media\logograndemalo.png' %}" class="w-96 h-56 mt-8 mb-8">
+        <div class="mt-10">
+            <img src="{% static 'classroomvr\media\logograndemalo.png' %}" class="w-64 h-auto mt-8 mb-8">
         </div>
         
-            <form method="post" class="flex flex-col">
+            <form method="post" class="flex flex-col w-[16vw]">
                 {% csrf_token %}
                 {{ form.as_p }}
                 
-                <button class="bg-white border-2 border-black border-radius rounded-xl w-32 h-9 pl-1 mb-3 mb-3 self-center hover:bg-[#ffa76c] hover:text-white" type="submit"> Iniciar sesió </button>
-                <button class="bg-white border-2 border-black border-radius rounded-xl w-32 h-9 pl-1 mb-3 mb-3 self-center hover:bg-[#ffa76c] hover:text-white"> Registre </button>
+                <button class="bg-white border-2 border-black border-radius rounded-xl w-32 h-10  pl-1 mb-3 mt-7 self-center hover:transition duration-1000 hover:bg-[#ffa76c] hover:text-white" type="submit"> Iniciar sesió </button>
+                <button class="bg-white border-2 border-black border-radius rounded-xl w-32 h-10 pl-1 self-center hover:transition duration-1000 hover:bg-[#ffa76c] hover:text-white"> Registre </button>
             </form>
         
     </div>
 </div>
 {% endblock body_data %}
+{% block js %}
+<script
+		src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous"></script>
+<script type="text/javascript">
+        $(document).ready(function() {
+            $("label").css("display","none")
+            $("input").css("border","2px black solid")
+                        .css("border-radius","15px")
+                        .css("margin-top","1rem")
+                        .css("width",'20rem')
+                        .css("height","2.8rem")
+                        .css("padding-left","1rem")
+            $("#id_username").attr("placeholder","Email")
+            $("#id_password").attr("placeholder","Contraseña")
+            $('.errorlist').append('<p id="cerrar">X</p')
+                            .css('background-color','LightCoral')
+                            .css('border-radius', '6px')
+                            .css('width','320px')
+                            .css('padding', '5px')
+                            .css('display', 'flex')
+            $('#cerrar').css('color', 'white')
+                        .css('cursor', 'pointer')
+            $('#cerrar').click(function() {
+                $('.errorlist').css('display','none')
+            });
+            $('.errorlist li').css('color', 'white')
+                            .css('padding', '5px')
+        })
+</script>
+{% endblock js %}

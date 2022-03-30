@@ -1,0 +1,81 @@
+{% extends 'base_template.html' %}
+{% load static %}
+{% block title %} Entregas alumnos {% endblock title %}
+{% block body_data %}
+<div class="w-full min-h-[80vh] bg-[#f9d7c0] m-auto flex justify-center align-center overflow-auto">
+    <div class="w-[95%] bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center">
+        {% include 'breadcrumbs.html' %}
+        <h2 class="text-3xl font-bold pt-5 mb-6">{{ Tarea.name }}</h2>
+        <br>
+        {% for Delivery in Entrega %}
+            <div  id="{{ Delivery.student.username }}" class="w-[90%] bg-[#eaeaea] border-2 border-black rounded-2xl mb-5 flex flex-row">
+                <div class="pl-5 pt-2 w-full">
+                    <p class="text-xl font-semibold pb-2 underline"> Nom </p>
+                    <p>{{ Delivery.student.username }}</p>
+                </div>
+                <div class="pl-3 pt-2 w-full">
+                    <p class="text-xl font-semibold pb-2 underline">Email</p>
+                    <p>{{ Delivery.student.email }}</p>
+                </div>
+                <div class="pl-3 pt-2 w-full">
+                    <p class="text-xl font-semibold pb-2 underline">Estat de la tramesa</p>
+                    <p>
+                        {% if Delivery.delivery_status == "DELIVERED" %}
+                            Entregat
+                        {% else %}
+                            No entregat
+                        {% endif %}                    
+                    </p>
+                </div>
+                <div class="pl-3 pt-2 w-full">
+                    <p class="text-xl font-semibold pb-2 underline">Data de la tramesa</p>
+                    <p>{{ Delivery.delivery_date }}</p>
+                </div>
+                <div class="pl-3 pt-2 w-full">
+                    <p class="text-xl font-semibold pb-2 underline">Arxiu</p>
+                    <a href="/{{Delivery.file}}" class="pb-6 underline text-orange-600 hover:text-orange-700 active:text-orange-900 visited:text-orange-400">{{ Delivery.file }}</a>
+                </div>
+                <div class="pl-3 pt-2 w-full">
+                    <p class="text-xl font-semibold pb-2 underline">Comentari</p>  
+                    <textarea id="{{Delivery.student.username}}comprof"rows="2" class="border-black border-2 p-2   border-radius rounded-xl mb-[4vh]" type="text" value="{{Delivery.professor_commentary}}">{{ Delivery.professor_commentary }}</textarea>
+                </div>
+                <div class="pl-3 pt-2 w-full">
+                    <p class="text-xl font-semibold pb-2 underline">Comentari alumne</p>
+                    <p class="pb-4 ">{{ Delivery.student_commentary }}</p>
+                </div>
+                <div class="pt-2 pr-5 text-right w-full flex flex-col" deliverypk="{{ Delivery.pk }}">
+                    <p class="text-xl font-semibold pb-2 underline" >Qualificació</p>
+                    <input class="w-[50px] border-black border-2 ml-auto p-1 border-radius rounded-xl" type="number" min="0" max="10" value="{{Delivery.score}}" id="{{ Delivery.student.username }}score">
+                    <input class="enviar mt-auto mb-3 ml-auto inline-block cursor-pointer border-black border-2 border-radius rounded-xl pt-full hover:transition duration-1000 hover:bg-[#ffa76c] hover:text-white" type="submit" value="Enviar" name="Enviar">
+                </div>    
+            </div>
+            <br>
+        {% endfor %}
+        
+        <div>
+            
+        </div>
+    </div>
+</div>
+{% endblock body_data %}
+{% block js %}
+<script
+		src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.enviar').on('click',function(){
+                let name = $(this).parent().parent().attr('id');
+                let score = $('#'+name+'score').val();
+                let comprof = $('#'+name+'comprof').val();
+                let deliveryid = $(this).parent().attr('deliverypk');
+                $.ajax({
+                    url: "http://127.0.0.1:8000/update/"+deliveryid+"/"+score+"/"+comprof,
+                    method : 'POST',
+                })
+				alert('Se ha cambiado con éxito')
+            })
+        });
+</script>
+{% endblock js %}

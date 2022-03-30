@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path,include
+from rest_framework import routers
 
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
@@ -10,5 +11,8 @@ urlpatterns = [
     path('login', LoginView.as_view(template_name='login.html'), name='login'),
     path('logout', LogoutView.as_view(template_name='login.html'), name='logout'),
     path('dashboard', views.dashboard, name='dashboard'),
+    path('task-deliveries/<int:taskid>', views.taskAllAlumns, name='taskAllAlumns'),
     path('files/<str:filename>', views.downloadFile, name='download_file'),
+    path('course/<int:courseID>',views.courses,name='courses'),
+    path('course/<int:course_id>/tasks', views.allTasksPerCoursePerStudent, name='all_tasks_per_course_per_student'),
 ]
