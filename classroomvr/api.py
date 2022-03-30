@@ -1,9 +1,10 @@
+from email import message
 import re
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.http import JsonResponse
 from django.urls import path
 from rest_framework.authtoken.models import Token
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password,make_password
 from queue import Empty
 from rest_framework.authentication import TokenAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -140,14 +141,16 @@ def checkIfDataExistInJson(values, json):
 @api_view(['GET'])
 def login(request):
     request_data = json.loads(request.body)
+    email = request_data['email']
+    password = request_data['password']
     try:
-        user = User.objects.get(email=request_data['email'])
+        user = User.objects.get(email=email)
     except:
         return JsonResponse({
             "status"    : 'ERROR',
             "message"   : 'Wrong credentials.',
             })
-    if check_password(user.password,request_data['password']) == False:
+    if user.check_password(password) == False:
         return JsonResponse({
             "status"    : 'ERROR',
             "message"   : 'Wrong credentials',
@@ -160,7 +163,8 @@ def login(request):
 
 @api_view(['GET'])
 def logout(request):
-    sessionToken = request.GET['session_token']
+    request_data = json.loads(request.body)
+    sessionToken = request_data['session_token']
     try:
         token = Token.objects.get(key=sessionToken)
         return JsonResponse({
@@ -176,23 +180,24 @@ def logout(request):
 @api_view(['GET'])
 def get_courses(request):
     request_data = json.loads(request.body)
+    sessionToken = request_data['session_token']
     try:
-        token = Token.objects.get(key=request_data['session_token'])
+        token = Token.objects.get(key=sessionToken)
         user = User.objects.get(email=token.user)
         Subscriptions = Subscription.objects.filter(user=user.pk)
         courseList=[]
         for courseid in Subscriptions:
             courseList.append(Course.objects.get(pk=courseid.course.pk))
-        json = []
+        message = []
         for course in courseList:
             proffList = Subscription.objects.filter(course=course.pk, course_role='PROFESSOR')
             teachers = []
             for prof in proffList:
                 teachers.append({
-                        "first_name"    : prof.user.first_name,
-                        "last_name" : prof.user.last_name
+                    "first_name"    : prof.user.first_name,
+                    "last_name" : prof.user.last_name
                     })
-            json.append({
+            message.append({
                 "courseID"  : course.pk,
                 "institutionID"  : course.school.pk,
                 "title"  : course.name,
@@ -203,43 +208,45 @@ def get_courses(request):
             })
         return JsonResponse({
             "status"    : 'OK',
-            "course_list"   : json
-            })
+            "course_list"   : message
+        })
     except:
         return JsonResponse({
             "status"    : 'ERROR',
             "message"   : 'session_token is required',
-            })
-            
+        })
+
 @api_view(['GET'])
 def get_courses_detail(request):
-    sessionToken = request.GET['session_token']
     request_data = json.loads(request.body)
-    if request_data['courseID'].isnumeric() != True:
+    sessionToken = request_data['session_token']
+    courseID = request_data['courseID']
+    if type(courseID) != int:
         return JsonResponse({
                 "status"    : 'ERROR',
                 "message"   : 'courseID is required.',
                 })
-    token = Token.objects.get(key=request_data['session_token'])
-    roluser = Subscription.objects.get(course=request_data['courseID'], user=token.user.pk)
+    token = Token.objects.get(key=sessionToken)
+    roluser = Subscription.objects.get(course=courseID, user=token.user.pk)
     if roluser.course_role == 'STUDENT':
         return JsonResponse({
                 "status"    : 'ERROR',
                 "message"   : 'Insufficient permissions.',
                 })
-    course = Course.objects.get(pk=request_data['courseID'])
+    course = Course.objects.get(pk=courseID)
     resource = Resource.objects.filter(course=course.pk)
     resourceList = []
     for recurso in resource:
         resourceList.append(recurso.name)
     task = Task.objects.filter(course=course.pk)
+    vrTask = Task.objects.filter(course=course.pk)
     taskvrList = []
     taskList = []
     for tarea in task:
-        if tarea.type == 'VR':
-            taskvrList.append(tarea.name)
-        else:
             taskList.append(tarea.name)
+    for tareavr in vrTask:
+        taskvrList.append(tareavr.name)
+
     return JsonResponse({
                 "status"    : 'OK',
                 "course"    :{
@@ -253,7 +260,7 @@ def get_courses_detail(request):
 
                 }
             })
-
+            
 urlpatterns = [
     path('pin_request', pin_request),
     path('start_vr_exercise', start_vr_exercise),
