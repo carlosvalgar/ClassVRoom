@@ -1,3 +1,4 @@
+from urllib import response
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpRequest
 from django.template import loader
@@ -84,11 +85,10 @@ def login(request):
 @login_required(login_url="/login")
 def dashboard(request):
 	if request.user.is_authenticated: 
-		alumn = request.user
-		alumnCourse = Subscription.objects.filter(user=request.user.pk)
+		userSubscriptions = Subscription.objects.filter(user=request.user.pk)
+		userCourses = Course.objects.filter(subscription__in=userSubscriptions)
 		context = {
-			'Alumn' : alumn,
-			'Cursos': alumnCourse,
+			'Courses': userCourses,
 		}
 	return render(request, 'dashboard.html',context)
 
@@ -107,3 +107,32 @@ def courses(request,courseID):
 		'vrTasks'	: vrTasks
 	}
 	return render(request, 'courses.html',context)
+def taskAllAlumns(request, taskid):
+	task = get_object_or_404(Task, pk=taskid)
+	delivery = Delivery.objects.filter(task=task.id)
+	context = {
+		'Tarea': task,
+		'Entrega': delivery,
+	}
+	return render(request, 'taskAllAlumns.html',context)
+
+@login_required(login_url="/login")
+def allTasksPerCoursePerStudent(request, course_id):
+	if not Subscription.objects.filter(course = course_id, course_role = 'STUDENT', user = request.user).exists():
+		return redirect('dashboard')
+	course = get_object_or_404(Course, pk = course_id)
+	professor = Subscription.objects.get(course = course, course_role = "PROFESSOR").user
+	tasks = Task.objects.all().filter(course = course)
+	student_tasks_deliveries = []
+	print(tasks)
+	for task in tasks:
+		print(task)
+		delivery = Delivery.objects.get(task = task, student = request.user)
+		student_tasks_deliveries.append({"task" : task, "delivery" : delivery})
+	context = {
+		'course'					: course,
+		'professor'					: professor,
+		'student'					: request.user,
+		'student_tasks_deliveries'	: student_tasks_deliveries,
+	}
+	return render(request, 'allTasksPerCoursePerStudent.html',context)

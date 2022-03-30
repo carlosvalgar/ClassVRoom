@@ -2,7 +2,71 @@
 {% load static %}
 {% block title %} Ejercicio {% endblock title %}
 {% block body_data %}
-	<script
+<div class="w-full min-h-[80vh] bg-[#f9d7c0] m-auto flex justify-center align-center overflow-auto">
+    <div class="w-2/5 h-auto bg-white mt-6 mb-6 pb-[30px] border-2 border-black rounded-2xl flex flex-col items-center ">
+		{% include 'breadcrums.html' %}
+		<div class="w-full mt-7 flex justify-between">
+			<button class="ml-10 bg-white border-[3px] border-black border-radius rounded-xl w-24 h-9 pl-1 self-center hover:bg-[#ffa76c] hover:text-white"><a href="http://127.0.0.1:8000/exercise/{{Task.pk}}/{{prevalumn}}"><i sizes="32x32" class="fa-solid fa-arrow-left "></i></a></button>
+			<h1 class="font-bold text-3xl">{{ Task }}</h1>
+			<button class="mr-10 bg-white border-[3px] border-black border-radius rounded-xl w-24 h-9 pl-1 self-center hover:bg-[#ffa76c] hover:text-white"><a href="http://127.0.0.1:8000/exercise/{{Task.pk}}/{{nextalumn}}"><i class="fa-solid fa-arrow-right"></i></a></button>
+		</div>
+			<div class="w-3/4 flex flex-col mt-10 ">
+
+				<div class="w-full flex flex-row ">
+					<div class="w-[43%] flex">
+						<label class="mb-[4.3vh] ml-auto">Alumno:</label>
+					</div>
+					<p  class="mb-[4vh] ml-[8%]" name="alumno">{{Alumn.username}}</p>
+				</div>
+
+				<div class="w-full flex flex-row  ">
+					<div class="w-[43%] flex">
+						<label class="ml-auto mb-[4.3vh]">Correo:</label>
+					</div>
+					
+					<p class=" mb-[4vh] ml-[8%]" name="correo">{{Alumn.email}}</p>
+				</div>
+				<div class="w-full flex flex-row">
+					<div class="w-[43%] flex">
+						<label class="ml-auto mb-[4.3vh]">Archivo:</label>
+					</div>
+					
+					<a href="/{{Delivery.file}}" class="ml-[8%] pl-2 mb-[3vh] underline text-orange-600 hover:text-orange-700 active:text-orange-900 visited:text-orange-300">{{Delivery.file}}</a>
+
+				</div>
+				<div class="w-full flex flex-row">
+					<div class="w-[43%] flex">
+						<label class="ml-auto mb-[4.3vh]">Puntuacion:</label>
+					</div>
+					
+					<input class="w-[10%] border-black border-2 ml-[8%] h-9 pt-1 pl-2 pr-2 border-radius rounded-xl mb-[3vh] overflow-auto" type="number" id="score" min="0" max="10" value="{{Delivery.score}}">
+
+				</div>
+				<div class="w-full flex flex-row  mb-[1.3vh]">
+					<div class="w-[43%] flex">
+						<label class="ml-auto mb-[4.3vh]" >Comentario profesor:</label>
+					</div>
+					
+					<textarea rows="2" class="border-black border-2 ml-[8%] w-[50%] h-[90%] border-radius rounded-xl p-2 mb-[4vh]" type="text" id="comprof" value="{{Delivery.professor_commentary}}"></textarea>
+
+				</div>
+				<div class="w-full flex flex-row">
+					<div class="w-[43%] flex">
+						<label class="ml-auto mb-[4.3vh]">Comentario alumno:</label>
+					</div>
+					<p class="ml-[8%]" name="comAlum">{{Delivery.student_commentary}}</p>
+				</div>
+				</div>
+				<input class="w-40 cursor-pointer border-black border-2 border-radius rounded-xl pl-2 pr-2 h-12 pt-1 mb-3 hover:transition duration-1000 hover:bg-[#ffa76c] hover:text-white" type="submit" name="" id="enviar">
+
+			</div>
+		
+		
+	</div>
+</div>
+{% endblock body_data %}
+{% block js %}
+<script
 		src="https://code.jquery.com/jquery-3.6.0.js"
         integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
         crossorigin="anonymous"></script>
@@ -16,39 +80,10 @@
                     url: "http://127.0.0.1:8000/update/"+deliveryid+"/"+score+"/"+comprof,
                     method : 'POST',
                 })
+				alert('Se ha cambiado con éxito')
             })
         })
-    </script>
-	<button><a href="http://127.0.0.1:8000/exercise/{{Task.pk}}/{{prevalumn}}">Anterior</a></button>
-	<button><a href="http://127.0.0.1:8000/exercise/{{Task.pk}}/{{nextalumn}}">Siguiente</a></button>
-	<h1>{{ Task }}</h1>
-		<div>	
-			<label>Alumno:</label>
-			<p name="alumno">{{Alumn}}</p>
-		</div>
-		<div>
-		<label>Correo:</label>
-		<p class="border-black border-2" name="correo">{{Alumn.email}}</p>
-		</div>
-		<div>
-		<label>Archivo:</label>
-		<p class="border-black border-2" name="archivo"><a href="">{{Delivery.file}}</a></p>
-		</div>
-		<div>
-		<label>Puntuacion:</label>
-		<input class="border-black border-2" type="number" id="score" min="0" max="10" value="{{Delivery.score}}">
-		</div>
-		<div>
-		<label >Comentario profesor:</label>
-		<input class="border-black border-2" type="text" id="comprof" value="{{Delivery.professor_commentary}}">
-		</div>
-		<div>
-		<label>Comentario alumno:</label>
-		<p name="comAlum">{{Delivery.student_commentary}}</p>
-		</div>
-		<input class="border-black border-2" type="submit" name="" id="enviar">
-{% endblock body_data %}
-{% block js %}
+</script>
 {% endblock js %}
 
 

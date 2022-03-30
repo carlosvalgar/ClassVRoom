@@ -138,6 +138,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('delivery_date', models.DateTimeField()),
                 ('file', models.FileField(upload_to='files')),
+                ('delivery_status', models.CharField(choices=[('DELIVERED', 'Delivered'), ('NO_DELIVERED', 'No delivered')], default='NO_DELIVERED', max_length=40)),
                 ('score', models.IntegerField()),
                 ('professor_commentary', models.CharField(max_length=500)),
                 ('student_commentary', models.CharField(max_length=500)),

@@ -2,10 +2,13 @@
 {% load static %}
 {% block title %} VRoom {% endblock title %}
 {% block body_data %}
-<div class="w-full h-[79.5%] bg-[#ffa76c] absolute m-auto absolute flex justify-center align-center">
+<div class="w-full min-h-[80vh] bg-[#f9d7c0] m-auto flex justify-center align-center overflow-auto">
     <div class="w-2/5 bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center justify-center">
-        <img src="{% static 'classroomvr\media\logograndemalo.png' %}" class="w-56 h-56">
-        <h2 class="text-5xl">Benvingut a VRoom!</h2>
+        <div class="flex flex-col justify-center">
+            <img src="{% static 'classroomvr\media\logograndemalo.png' %}" class="w-96 h-auto">
+            <h2 class="text-5xl pt-16">Benvingut a VRoom!</h2>
+        </div>
+        
     </div>
 </div>
 {% endblock body_data %}
