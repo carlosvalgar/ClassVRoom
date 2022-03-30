@@ -35,6 +35,19 @@
                         .css("padding-left","1rem")
             $("#id_username").attr("placeholder","Email")
             $("#id_password").attr("placeholder","Contraseña")
+            $('.errorlist').append('<p id="cerrar">X</p')
+                            .css('background-color','LightCoral')
+                            .css('border-radius', '6px')
+                            .css('width','320px')
+                            .css('padding', '5px')
+                            .css('display', 'flex')
+            $('#cerrar').css('color', 'white')
+                        .css('cursor', 'pointer')
+            $('#cerrar').click(function() {
+                $('.errorlist').css('display','none')
+            });
+            $('.errorlist li').css('color', 'white')
+                            .css('padding', '5px')
         })
 </script>
 {% endblock js %}
