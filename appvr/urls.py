@@ -57,6 +57,13 @@ router.register(r'users', UserViewSet)
 router.register(r'get_courses', CourseViewSet)
 router.register(r'schools', SchoolViewSet)
 
+from rest_framework import routers, serializers, viewsets
+from rest_framework.authtoken import views
+
+
+
+router = routers.DefaultRouter()
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('classroomvr.urls')),

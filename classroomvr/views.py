@@ -9,6 +9,7 @@ from .models import *
 import os
 import mimetypes
 
+from rest_framework import status
 # Comprobate role of actual user to acces.
 #def role_check(user):
 #	rolUser = get_object_or_404(Subscription, user=request.user, course=task.course)
@@ -92,6 +93,20 @@ def dashboard(request):
 	return render(request, 'dashboard.html',context)
 
 @login_required(login_url="/login")
+def courses(request,courseID):
+	userRol = Subscription.objects.filter(course=courseID, user=request.user.pk)[0]
+	resources = Resource.objects.filter(course=courseID)
+	tasks = Task.objects.filter(course=courseID)
+	vrTasks = VRTask.objects.filter(course=courseID)
+	firstId = Subscription.objects.filter(course=courseID,course_role='STUDENT')[0]
+	context = {
+		'firstId'	: firstId,
+		'userRol'	:	userRol,
+		'resources'	: resources,
+		'tasks'	: tasks,
+		'vrTasks'	: vrTasks
+	}
+	return render(request, 'courses.html',context)
 def taskAllAlumns(request, taskid):
 	task = get_object_or_404(Task, pk=taskid)
 	delivery = Delivery.objects.filter(task=task.id)

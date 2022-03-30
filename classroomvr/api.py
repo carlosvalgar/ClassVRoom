@@ -1,10 +1,13 @@
-from queue import Empty
-from django.http import JsonResponse
-from django.urls import path
-from rest_framework.authentication import TokenAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
+from email import message
+import re
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.http import JsonResponse
+from django.urls import path
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.hashers import check_password,make_password
+from queue import Empty
+from rest_framework.authentication import TokenAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from .models import *
 import random, json, os
 
@@ -135,8 +138,135 @@ def checkIfDataExistInJson(values, json):
             }
     return {"status" : "OK"}
 
+@api_view(['GET'])
+def login(request):
+    request_data = json.loads(request.body)
+    email = request_data['email']
+    password = request_data['password']
+    try:
+        user = User.objects.get(email=email)
+    except:
+        return JsonResponse({
+            "status"    : 'ERROR',
+            "message"   : 'Wrong credentials.',
+            })
+    if user.check_password(password) == False:
+        return JsonResponse({
+            "status"    : 'ERROR',
+            "message"   : 'Wrong credentials',
+            })
+    token = Token.objects.get_or_create(user=user)
+    return JsonResponse({
+            "status"    : 'OK',
+            "session_token" : str(token[0])
+            })
+
+@api_view(['GET'])
+def logout(request):
+    request_data = json.loads(request.body)
+    sessionToken = request_data['session_token']
+    try:
+        token = Token.objects.get(key=sessionToken)
+        return JsonResponse({
+            "status"    : 'OK',
+            "message"   : 'session successfully closed',
+            })
+    except:
+        return JsonResponse({
+            "status"    : 'ERROR',
+            "message"   : 'session_token is required',
+            })
+
+@api_view(['GET'])
+def get_courses(request):
+    request_data = json.loads(request.body)
+    sessionToken = request_data['session_token']
+    try:
+        token = Token.objects.get(key=sessionToken)
+        user = User.objects.get(email=token.user)
+        Subscriptions = Subscription.objects.filter(user=user.pk)
+        courseList=[]
+        for courseid in Subscriptions:
+            courseList.append(Course.objects.get(pk=courseid.course.pk))
+        message = []
+        for course in courseList:
+            proffList = Subscription.objects.filter(course=course.pk, course_role='PROFESSOR')
+            teachers = []
+            for prof in proffList:
+                teachers.append({
+                    "first_name"    : prof.user.first_name,
+                    "last_name" : prof.user.last_name
+                    })
+            message.append({
+                "courseID"  : course.pk,
+                "institutionID"  : course.school.pk,
+                "title"  : course.name,
+                #"description"  : course.description
+                "subscribers"   : {
+                    "teachers"  : teachers
+                },
+            })
+        return JsonResponse({
+            "status"    : 'OK',
+            "course_list"   : message
+        })
+    except:
+        return JsonResponse({
+            "status"    : 'ERROR',
+            "message"   : 'session_token is required',
+        })
+
+@api_view(['GET'])
+def get_courses_detail(request):
+    request_data = json.loads(request.body)
+    sessionToken = request_data['session_token']
+    courseID = request_data['courseID']
+    if type(courseID) != int:
+        return JsonResponse({
+                "status"    : 'ERROR',
+                "message"   : 'courseID is required.',
+                })
+    token = Token.objects.get(key=sessionToken)
+    roluser = Subscription.objects.get(course=courseID, user=token.user.pk)
+    if roluser.course_role == 'STUDENT':
+        return JsonResponse({
+                "status"    : 'ERROR',
+                "message"   : 'Insufficient permissions.',
+                })
+    course = Course.objects.get(pk=courseID)
+    resource = Resource.objects.filter(course=course.pk)
+    resourceList = []
+    for recurso in resource:
+        resourceList.append(recurso.name)
+    task = Task.objects.filter(course=course.pk)
+    vrTask = Task.objects.filter(course=course.pk)
+    taskvrList = []
+    taskList = []
+    for tarea in task:
+            taskList.append(tarea.name)
+    for tareavr in vrTask:
+        taskvrList.append(tareavr.name)
+
+    return JsonResponse({
+                "status"    : 'OK',
+                "course"    :{
+                    "title" : course.name,
+                    #"description"   : course.description,
+                    "courseID"  : course.pk,
+                    "institutionID" : course.school.pk,
+                    "elements"  : resourceList,
+                    "tasks" : taskList,
+                    "vr_tasks"  :   taskvrList,
+
+                }
+            })
+            
 urlpatterns = [
     path('pin_request', pin_request),
     path('start_vr_exercise', start_vr_exercise),
-    path('finish_vr_exercise', finish_vr_exercise)
+    path('finish_vr_exercise', finish_vr_exercise),
+    path('login', login ),
+    path('logout', logout),
+    path('get_courses', get_courses),
+    path('get_courses_detail', get_courses_detail),
 ]
