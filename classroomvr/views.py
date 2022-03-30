@@ -92,4 +92,18 @@ def dashboard(request):
 		}
 	return render(request, 'dashboard.html',context)
 
-
+@login_required(login_url="/login")
+def courses(request,courseID):
+	userRol = Subscription.objects.filter(course=courseID, user=request.user.pk)[0]
+	resources = Resource.objects.filter(course=courseID)
+	tasks = Task.objects.filter(course=courseID)
+	vrTasks = VRTask.objects.filter(course=courseID)
+	firstId = Subscription.objects.filter(course=courseID,course_role='STUDENT')[0]
+	context = {
+		'firstId'	: firstId,
+		'userRol'	:	userRol,
+		'resources'	: resources,
+		'tasks'	: tasks,
+		'vrTasks'	: vrTasks
+	}
+	return render(request, 'courses.html',context)
