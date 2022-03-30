@@ -26,7 +26,7 @@ def indvidualQualification(request,taskid,userid):
 
 	rolUser = get_object_or_404(Subscription, user=request.user, course=task.course)
 	nameUser = get_object_or_404(User, email=request.user)
-	courseName= get_object_or_404(Course, name=task.course)
+	course= get_object_or_404(Course, name=task.course)
 
 	for student in listStudent:
 		listStudentId.append(student.user.pk)
@@ -38,19 +38,26 @@ def indvidualQualification(request,taskid,userid):
 
 	prevStudent = listStudentId[listStudentId.index(userid) - 1]
 
-	conext = {
+	breadcrumbs = [
+		{'url':'/dashboard','name':'Inicio'},
+		{'url':'/course/{}'.format(course.pk),'name':course.name},
+		{'url':'','name':task.name},
+	]
+	
+	context = {
 		'Task' : task,
 		'Alumn' : alumn,
 		'Delivery' : delivery,
 		'nextalumn' : nextStudent,
 		'prevalumn' : prevStudent,
-		'actualCourse': courseName,
+		'actualCourse': course,
 		'actualUserRol': rolUser,
 		'actualUserName': nameUser,
+		'Breadcrumbs': breadcrumbs,
 	}
 	if rolUser.course_role == 'STUDENT':
-		return redirect('dashboard')
-	return render(request, 'individualQualification.html',conext)
+		return render(request, 'individualQualificationStudent.html',context)
+	return render(request, 'individualQualification.html',context)
 
 def downloadFile(request, filename=''):
 	if filename != '':
@@ -110,9 +117,19 @@ def courses(request,courseID):
 def taskAllAlumns(request, taskid):
 	task = get_object_or_404(Task, pk=taskid)
 	delivery = Delivery.objects.filter(task=task.id)
+	course = Course.objects.get(pk=task.course.pk)
+
+	breadcrumbs = [
+		{'url':'/dashboard','name':'Inicio'},
+		{'url':'/course/{}'.format(course.pk),'name':course.name},
+		{'url':'','name':task.name},
+	]
+
 	context = {
 		'Tarea': task,
 		'Entrega': delivery,
+		'Breadcrumbs':breadcrumbs,
+		'Course':course.name,
 	}
 	return render(request, 'taskAllAlumns.html',context)
 
@@ -124,15 +141,21 @@ def allTasksPerCoursePerStudent(request, course_id):
 	professor = Subscription.objects.get(course = course, course_role = "PROFESSOR").user
 	tasks = Task.objects.all().filter(course = course)
 	student_tasks_deliveries = []
-	print(tasks)
 	for task in tasks:
-		print(task)
 		delivery = Delivery.objects.get(task = task, student = request.user)
 		student_tasks_deliveries.append({"task" : task, "delivery" : delivery})
+	
+	breadcrumbs = [
+		{'url':'/dashboard','name':'Inicio'},
+		{'url':'/course/{}'.format(course.pk),'name':course.name},
+		{'url':'','name':'Todas las tareas'},
+	]
+
 	context = {
 		'course'					: course,
 		'professor'					: professor,
 		'student'					: request.user,
 		'student_tasks_deliveries'	: student_tasks_deliveries,
+		'Breadcrumbs'				: breadcrumbs,
 	}
 	return render(request, 'allTasksPerCoursePerStudent.html',context)

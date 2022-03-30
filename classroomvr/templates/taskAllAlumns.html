@@ -4,7 +4,7 @@
 {% block body_data %}
 <div class="w-full min-h-[80vh] bg-[#f9d7c0] m-auto flex justify-center align-center overflow-auto">
     <div class="w-[95%] bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center">
-        {% include 'breadcrums.html' %}
+        {% include 'breadcrumbs.html' %}
         <h2 class="text-3xl font-bold pt-5 mb-6">{{ Tarea.name }}</h2>
         <br>
         {% for Delivery in Entrega %}
