@@ -144,7 +144,13 @@ def checkIfDataExistInJson(values, json):
 
 @api_view(['GET'])
 def login(request):
-    request_data = json.loads(request.body)
+    try:
+        request_data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "status"    : "ERROR",
+            "message"   : "No JSON has been sended"
+        })
     email = request_data['email']
     password = request_data['password']
     try:
