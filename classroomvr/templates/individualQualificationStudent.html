@@ -74,7 +74,7 @@
                 let comprof = $('#comprof').val();
                 let deliveryid = {{ Delivery.pk }};
                 $.ajax({
-                    url: "http://127.0.0.1:8000/update/"+deliveryid+"/"+score+"/"+comprof,
+                    url: "/update/"+deliveryid+"/"+score+"/"+comprof,
                     method : 'POST',
                 })
 				alert('Se ha cambiado con éxito')
