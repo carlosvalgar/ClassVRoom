@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator
 
 # Create your models here.
 class School(models.Model):
@@ -33,6 +34,7 @@ class User(AbstractUser):
 class Course(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
+    description = models.CharField(max_length=300)
     def __str__(self):
         return self.name
 
@@ -60,13 +62,25 @@ class Task(models.Model):
     def __str__(self):
         return self.name
 
+class VRExercise(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=300)
+    def __str__(self):
+        return self.name
+
 class VRTask(models.Model):
     name = models.CharField(max_length=100)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     exercise_description = models.CharField(max_length=500)
     exercise_version = models.IntegerField()
+    exercise = models.ForeignKey(VRExercise, on_delete=models.CASCADE)
     def __str__(self):
         return self.name
+
+class VRQualification(models.Model):
+    VRTask = models.ForeignKey(VRTask, on_delete=models.CASCADE)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    score = models.PositiveIntegerField(validators=[MaxValueValidator(10)]) 
 
 class Delivery(models.Model):
     class DeliveryStatusType(models.TextChoices):
