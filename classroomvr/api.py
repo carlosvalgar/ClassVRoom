@@ -20,8 +20,9 @@ def pin_request(request):
     except json.JSONDecodeError:
         return JsonResponse({
             "status"    : "ERROR",
-            "message"   : "VRtaskID is required"
+            "message"   : "No JSON has been sended"
         })
+
     data_needed = ["VRtaskID"]
     data_validated = checkIfDataExistInJson(data_needed, request_data)
     if data_validated["status"] != "OK":
@@ -34,26 +35,29 @@ def pin_request(request):
             "status"    : "ERROR",
             "message"   : "That VR task does not exist",
         })
+        
     if Pin.objects.filter(vr_task = vrTask, student = request.user).exists():
         userVrTask = Pin.objects.get(vr_task = vrTask, student = request.user)
         return JsonResponse({
             "status"    : "OK",
             "PIN"       : userVrTask.pin,
             })
-    else:
-        validPin = False
-        while not validPin:
-            possiblePin = random.randint(1000, 9999)
-            if not Pin.objects.filter(pin = possiblePin).exists():
-                validPin = True
 
-        userVrTask = Pin(vr_task = vrTask, student = request.user, pin = possiblePin)
-        userVrTask.save()
+    pin = createNewPin()
 
-        return JsonResponse({
-            "status"    : "OK",
-            "message"   : userVrTask.pin,
-        })
+    userVrTask = Pin(vr_task = vrTask, student = request.user, pin = pin)
+    userVrTask.save()
+
+    return JsonResponse({
+        "status"    : "OK",
+        "message"   : userVrTask.pin,
+    })
+
+def createNewPin():
+    while True:
+        possiblePin = possiblePin = random.randint(1000, 9999)
+        if not Pin.objects.filter(pin = possiblePin).exists():
+            return possiblePin
 
 @api_view(['GET'])
 def start_vr_exercise(request):
@@ -62,7 +66,7 @@ def start_vr_exercise(request):
     except json.JSONDecodeError:
         return JsonResponse({
             "status"    : "ERROR",
-            "message"   : "PIN is required"
+            "message"   : "No JSON has been sended"
         })
     data_needed = ["PIN"]
     data_validated = checkIfDataExistInJson(data_needed, request_data)
@@ -89,7 +93,7 @@ def finish_vr_exercise(request):
     except json.JSONDecodeError:
         return JsonResponse({
             "status"    : "ERROR",
-            "message"   : "PIN is required"
+            "message"   : "No JSON has been sended"
         })
     data_needed = ["PIN", "auto_grade", "VRexerciseID", "exerciseVersion", "performance_data"]
     data_validated = checkIfDataExistInJson(data_needed, request_data)
