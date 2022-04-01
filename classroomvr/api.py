@@ -142,7 +142,7 @@ def checkIfDataExistInJson(values, json):
             }
     return {"status" : "OK"}
 
-@api_view(['GET'])
+@api_view(['POST'])
 def login(request):
     try:
         request_data = json.loads(request.body)
