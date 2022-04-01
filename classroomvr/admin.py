@@ -52,12 +52,12 @@ class TaskAdmin(admin.ModelAdmin):
 class VRDeliveryInline(admin.TabularInline):
     model = VRDelivery
     extra = 1
-class VRExerciseInline(admin.TabularInline):
-    model = VRExercise
+class VRQualificationInline(admin.TabularInline):
+    model = VRQualification
     extra = 1
 class VRTaskAdmin(admin.ModelAdmin):
     list_display = ('name', 'course')
-    inlines = [VRDeliveryInline, VRExerciseInline,]
+    inlines = [VRDeliveryInline,VRQualificationInline,]
     def get_queryset(self, request):
         qs = VRTask.objects
         if request.user.is_superuser:
@@ -77,9 +77,9 @@ class CustomUserAdmin(UserAdmin):
 
 
 
-CustomUserAdmin.list_display += ('school', 'permissions')
-CustomUserAdmin.fieldsets += ((None, {'fields': ['school', 'permissions']}),)
-CustomUserAdmin.add_fieldsets += ((None, {'fields': ['school', 'permissions','email']}),)
+CustomUserAdmin.list_display += ('school', )
+CustomUserAdmin.fieldsets += ((None, {'fields': ['school']}),)
+CustomUserAdmin.add_fieldsets += ((None, {'fields': ['school','email','first_name','last_name']}),)
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(School)
@@ -90,5 +90,3 @@ admin.site.register(VRExercise)
 
 admin.site.register(Pin)
 admin.site.register(PrivacyPolicy)
-admin.site.register(PrivacyPermission)
-admin.site.register(PrivacyPolicies_PrivacyPermissions)
