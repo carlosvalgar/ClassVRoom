@@ -78,7 +78,7 @@ def start_vr_exercise(request):
             "status"                : "OK",
             "username"              : userVrTask.student.username,
             "VRexerciseID"          : userVrTask.vr_task.pk,
-            "minExerciseVersion"    : userVrTask.vr_task.exercise_version,
+            "minExerciseVersion"    : "This value is not implemented",
         })
     else:
         return JsonResponse({
