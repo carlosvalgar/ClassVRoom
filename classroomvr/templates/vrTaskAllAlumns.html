@@ -1,0 +1,63 @@
+{% extends 'base_template.html' %}
+{% load static %}
+{% block title %} Entregas alumnos {% endblock title %}
+{% block body_data %}
+<div class="w-full min-h-[80vh] bg-[#f9d7c0] m-auto flex justify-center align-center overflow-auto">
+    <div class="w-[95%] bg-white mt-6 mb-12 border-2 border-black rounded-2xl flex flex-col items-center">
+        {% include 'breadcrumbs.html' %}
+        <h2 class="text-3xl font-bold pt-5 mb-6">{{ VRTask.name }}</h2>
+        <div class="w-[90%] bg-[#f9d7c0] text-3xl text-center px-6 py-2 border-2 border-black rounded-2xl mb-6 flex flex-row justify-between break-words">
+                <p>Nombre</p>
+                <p>Qualificación</p>   
+        </div>
+        {% for qualification in VRQualifications %}
+        <div class="containerDeliveries w-[90%] min-h-[100px] bg-[#eaeaea] text-center px-6 py-2 border-2 border-black rounded-2xl mb-6 flex flex-col break-words">
+            <div class=" w-full flex justify-between text-2xl">
+                <p >{{qualification.student.first_name}}</p>
+                <p>{{qualification.score}}</p>
+            </div>
+            <div class="deliveries w-[90%] min-h-[100px] bg-[#eaeaea] text-center mt-5 px-6 py-2 border-2 border-black rounded-2xl mb-6 flex flex-col break-words">
+                <div class="flex flex-row justify-between pb-6 ">
+                    <p class="w-[25%] text-xl font-semibold underline"> Fecha entrega </p>
+                    <p class="w-[25%] text-xl font-semibold underline"> Items pasados </p>
+                    <p class="w-[25%] text-xl font-semibold underline"> Items fallados </p>
+                    <p class="w-[25%] text-xl font-semibold underline"> Puntuación </p>
+                </div>
+                
+                {% for vrdelivery in VRDeliveries %}
+                    {% if qualification.student.pk == vrdelivery.student.pk %}
+                        <div class="w-full bg-[#eaeaea] border-2 border-black rounded-2xl mb-5 flex flex-row justify-between">
+                                <p class="w-[25%]">{{vrdelivery.day_exercise_was_done}}</p>
+                                <p class="w-[25%]">{{vrdelivery.passed_items}}</p>
+                                <p class="w-[25%]">{{vrdelivery.failed_items}}</p>
+                                <p class="w-[25%]">{{vrdelivery.score}}</p>
+                        </div>
+                        
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="flex flex-row mt-5">
+                <button class="toggle py-1 px-6 mb-3 mr-auto cursor-pointer border-black border-2 border-radius rounded-xl pt-full hover:transition duration-1000 hover:bg-[#ffa76c] hover:text-white">Entregas</button>
+                <input class="enviar mt-auto py-1 px-6 mb-3 ml-auto cursor-pointer border-black border-2 border-radius rounded-xl pt-full hover:transition duration-1000 hover:bg-[#ffa76c] hover:text-white" type="submit" value="Enviar" name="Enviar">
+    
+            </div>
+        </div>
+            
+        {% endfor %}
+    </div>
+</div>
+{% endblock body_data %}
+{% block js %}
+<script
+		src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".deliveries").hide()
+            $('.toggle').on('click',function(){
+                $(this).parent().siblings(".deliveries").slideToggle("slow")
+            })
+        })
+    </script>
+{% endblock js %}

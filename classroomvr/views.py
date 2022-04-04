@@ -79,6 +79,12 @@ def update(request, deliveryid, score, comprof):
 	delivery.score = score
 	delivery.professor_commentary = comprof
 	delivery.save()
+@csrf_exempt
+def vrupdate(request, qualificationid, score, comprof):
+	qualification = get_object_or_404(VRQualification, pk=qualificationid)
+	qualification.score = score
+	qualification.professor_commentary = comprof
+	qualification.save()
 
 def landingPage(request):
 	if request.user.is_authenticated:
@@ -106,11 +112,12 @@ def courses(request,courseID):
 	tasks = Task.objects.filter(course=courseID)
 	vrTasks = VRTask.objects.filter(course=courseID)
 	firstId = Subscription.objects.filter(course=courseID,course_role='STUDENT')[0]
+	
 	context = {
 		'firstId'	: firstId,
-		'userRol'	:	userRol,
+		'userRol'	: userRol,
 		'resources'	: resources,
-		'tasks'	: tasks,
+		'tasks'		: tasks,
 		'vrTasks'	: vrTasks
 	}
 	return render(request, 'courses.html',context)
@@ -159,3 +166,59 @@ def allTasksPerCoursePerStudent(request, course_id):
 		'Breadcrumbs'				: breadcrumbs,
 	}
 	return render(request, 'allTasksPerCoursePerStudent.html',context)
+
+def taskVrIndividualQualification(request,vrtaskid,userid):
+	alumn = get_object_or_404(User, pk=userid)
+	vrtask = get_object_or_404(VRTask, pk=vrtaskid)
+	course = get_object_or_404(Course, name=vrtask.course)
+	vrdeliveries = VRDelivery.objects.filter(vr_task=vrtaskid, student=userid)
+	listStudent = Subscription.objects.filter(course=vrtask.course, course_role='STUDENT')
+	listStudentId = []
+	for student in listStudent:
+		listStudentId.append(student.user.pk)
+
+	if listStudentId.index(userid) == len(listStudentId)-1:
+		nextStudent = listStudentId[0]
+	else:
+		nextStudent = listStudentId[listStudentId.index(userid) + 1]
+	prevStudent = listStudentId[listStudentId.index(userid) - 1]
+	
+	qualification = VRQualification.objects.filter( vr_task=vrtaskid, student=userid)[0]
+	
+	breadcrumbs = [
+		{'url':'/dashboard','name':'Inicio'},
+		{'url':'/course/{}'.format(course.pk),'name':course.name},
+		{'url':'','name':vrtask.name},
+	]
+	
+	context = {
+		'Alumn' 						: alumn,
+		'ListStudents'					: listStudent,
+		'ListDeliveries'				: vrdeliveries,
+		'VRTask'						: vrtask,
+		'NextStudent' 					: nextStudent,
+		'PrevStudent' 					: prevStudent,
+		'Qualification'					: qualification,
+		'Breadcrumbs'					: breadcrumbs,
+		
+	}
+	return render(request, 'vrIndividualQualification.html',context)
+
+def vrTaskAllAlumns(request, vrtaskid):
+	vrtask = get_object_or_404(VRTask, pk=vrtaskid)
+	vrdeliveries = VRDelivery.objects.filter(vr_task=vrtaskid)
+	vrqualifications = VRQualification.objects.filter(vr_task=vrtaskid)
+	course = Course.objects.get(name=vrtask.course)
+	breadcrumbs = [
+		{'url':'/dashboard','name':'Inicio'},
+		{'url':'/course/{}'.format(course.pk),'name':course.name},
+		{'url':'','name':vrtask.name},
+	]
+
+	context={
+		'VRTask'			: vrtask,
+		'VRDeliveries'		: vrdeliveries,
+		'VRQualifications'	: vrqualifications,
+		'Course'			: course,
+	}
+	return render(request, 'vrTaskAllAlumns.html',context)
