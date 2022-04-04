@@ -128,6 +128,8 @@ def finish_vr_exercise(request):
         student_commentary = "",
         )
     vr_delivery.save()
+
+    pin.delete();
     return JsonResponse({
         "status"    : "OK",
         "message"   : "Exercise data succesfully stored"
@@ -172,102 +174,91 @@ def login(request):
             })
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def logout(request):
-    request_data = json.loads(request.body)
-    sessionToken = request_data['session_token']
-    try:
-        token = Token.objects.get(key=sessionToken)
-        return JsonResponse({
-            "status"    : 'OK',
-            "message"   : 'session successfully closed',
-            })
-    except:
-        return JsonResponse({
-            "status"    : 'ERROR',
-            "message"   : 'session_token is required',
-            })
+    request.user.auth_token.delete()
+    return JsonResponse({
+        "status"    : 'OK',
+        "message"   : 'session successfully closed',
+        })
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def get_courses(request):
-    request_data = json.loads(request.body)
-    sessionToken = request_data['session_token']
-    try:
-        token = Token.objects.get(key=sessionToken)
-        user = User.objects.get(email=token.user)
-        Subscriptions = Subscription.objects.filter(user=user.pk)
-        courseList=[]
-        for courseid in Subscriptions:
-            courseList.append(Course.objects.get(pk=courseid.course.pk))
-        message = []
-        for course in courseList:
-            proffList = Subscription.objects.filter(course=course.pk, course_role='PROFESSOR')
-            teachers = []
-            for prof in proffList:
-                teachers.append({
-                    "first_name"    : prof.user.first_name,
-                    "last_name" : prof.user.last_name
-                    })
-            message.append({
-                "courseID"  : course.pk,
-                "institutionID"  : course.school.pk,
-                "title"  : course.name,
-                #"description"  : course.description
-                "subscribers"   : {
-                    "teachers"  : teachers
-                },
-            })
-        return JsonResponse({
-            "status"    : 'OK',
-            "course_list"   : message
+    user = User.objects.get(email=request.user)
+    Subscriptions = Subscription.objects.filter(user=user.pk)
+    courseList=[]
+    for courseid in Subscriptions:
+        courseList.append(Course.objects.get(pk=courseid.course.pk))
+    message = []
+    for course in courseList:
+        proffList = Subscription.objects.filter(course=course.pk, course_role='PROFESSOR')
+        teachers = []
+        for prof in proffList:
+            teachers.append({
+                "first_name"    : prof.user.first_name,
+                "last_name" : prof.user.last_name
+                })
+        message.append({
+            "courseID"  : course.pk,
+            "institutionID"  : course.school.pk,
+            "title"  : course.name,
+            "subscribers"   : {
+                "teachers"  : teachers
+            },
         })
-    except:
-        return JsonResponse({
-            "status"    : 'ERROR',
-            "message"   : 'session_token is required',
-        })
+    return JsonResponse({
+        "status"    : 'OK',
+        "course_list"   : message
+    })
+
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def get_courses_detail(request):
-    request_data = json.loads(request.body)
-    sessionToken = request_data['session_token']
+    try:
+        request_data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "status"    : "ERROR",
+            "message"   : "No JSON has been sended"
+        })
+
     courseID = request_data['courseID']
     if type(courseID) != int:
         return JsonResponse({
                 "status"    : 'ERROR',
                 "message"   : 'courseID is required.',
                 })
-    token = Token.objects.get(key=sessionToken)
-    roluser = Subscription.objects.get(course=courseID, user=token.user.pk)
-    if roluser.course_role == 'STUDENT':
-        return JsonResponse({
-                "status"    : 'ERROR',
-                "message"   : 'Insufficient permissions.',
-                })
     course = Course.objects.get(pk=courseID)
     resource = Resource.objects.filter(course=course.pk)
     resourceList = []
+
     for recurso in resource:
         resourceList.append(recurso.name)
     task = Task.objects.filter(course=course.pk)
     vrTask = Task.objects.filter(course=course.pk)
     taskvrList = []
     taskList = []
+
     for tarea in task:
             taskList.append(tarea.name)
+
     for tareavr in vrTask:
         taskvrList.append(tareavr.name)
 
     return JsonResponse({
                 "status"    : 'OK',
-                "course"    :{
-                    "title" : course.name,
-                    #"description"   : course.description,
-                    "courseID"  : course.pk,
+                "course"    : {
+                    "title"         : course.name,
+                    "courseID"      : course.pk,
                     "institutionID" : course.school.pk,
-                    "elements"  : resourceList,
-                    "tasks" : taskList,
-                    "vr_tasks"  :   taskvrList,
-
+                    "elements"      : resourceList,
+                    "tasks"         : taskList,
+                    "vr_tasks"      : taskvrList,
                 }
             })
             
