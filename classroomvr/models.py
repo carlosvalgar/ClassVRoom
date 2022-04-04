@@ -72,9 +72,11 @@ class VRTask(models.Model):
         return self.name
 
 class VRQualification(models.Model):
-    VRTask = models.ForeignKey(VRTask, on_delete=models.CASCADE)
+    vr_task = models.ForeignKey(VRTask, on_delete=models.CASCADE)
     student = models.ForeignKey(User, on_delete=models.CASCADE)
-    score = models.PositiveIntegerField(validators=[MaxValueValidator(10)], blank=True) 
+    score = models.PositiveIntegerField(validators=[MaxValueValidator(10)], blank=True, null=True)
+    professor_commentary = models.CharField(max_length=500)
+    student_commentary = models.CharField(max_length=500)
 
 class Delivery(models.Model):
     class DeliveryStatusType(models.TextChoices):
@@ -85,7 +87,7 @@ class Delivery(models.Model):
     delivery_date = models.DateTimeField()
     file = models.FileField(upload_to='files', blank=True, null=True)
     delivery_status = models.CharField(max_length=40, choices=DeliveryStatusType.choices, default=DeliveryStatusType.NO_DELIVERED)
-    score = models.IntegerField(blank=True)
+    score = models.IntegerField(blank=True, null=True)
     professor_commentary = models.CharField(max_length=500, blank=True)
     student_commentary = models.CharField(max_length=500, blank=True)
 
@@ -99,8 +101,7 @@ class VRDelivery(models.Model):
     delivery_date = models.DateTimeField()
     performance_data = models.FileField(upload_to='files', blank=True, null=True)
     exercise_version = models.IntegerField()
-    professor_commentary = models.CharField(max_length=500)
-    student_commentary = models.CharField(max_length=500)
+    
 
 class Pin(models.Model):
     vr_task = models.ForeignKey(VRTask, on_delete=models.CASCADE)
