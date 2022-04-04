@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import *
 import random, json, os
 
-@api_view(['GET'])
+@api_view(['POST'])
 @authentication_classes([TokenAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def pin_request(request):
@@ -59,7 +59,7 @@ def createNewPin():
         if not Pin.objects.filter(pin = possiblePin).exists():
             return possiblePin
 
-@api_view(['GET'])
+@api_view(['POST'])
 def start_vr_exercise(request):
     try:
         request_data = json.loads(request.body)
@@ -78,7 +78,7 @@ def start_vr_exercise(request):
             "status"                : "OK",
             "username"              : userVrTask.student.username,
             "VRexerciseID"          : userVrTask.vr_task.pk,
-            "minExerciseVersion"    : userVrTask.vr_task.exercise_version,
+            "minExerciseVersion"    : "This value is not implemented",
         })
     else:
         return JsonResponse({
@@ -142,9 +142,15 @@ def checkIfDataExistInJson(values, json):
             }
     return {"status" : "OK"}
 
-@api_view(['GET'])
+@api_view(['POST'])
 def login(request):
-    request_data = json.loads(request.body)
+    try:
+        request_data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "status"    : "ERROR",
+            "message"   : "No JSON has been sended"
+        })
     email = request_data['email']
     password = request_data['password']
     try:
@@ -165,7 +171,7 @@ def login(request):
             "session_token" : str(token[0])
             })
 
-@api_view(['GET'])
+@api_view(['POST'])
 def logout(request):
     request_data = json.loads(request.body)
     sessionToken = request_data['session_token']
@@ -181,7 +187,7 @@ def logout(request):
             "message"   : 'session_token is required',
             })
 
-@api_view(['GET'])
+@api_view(['POST'])
 def get_courses(request):
     request_data = json.loads(request.body)
     sessionToken = request_data['session_token']
@@ -220,7 +226,7 @@ def get_courses(request):
             "message"   : 'session_token is required',
         })
 
-@api_view(['GET'])
+@api_view(['POST'])
 def get_courses_detail(request):
     request_data = json.loads(request.body)
     sessionToken = request_data['session_token']

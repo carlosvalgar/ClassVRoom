@@ -96,7 +96,6 @@ class VRDelivery(models.Model):
     passed_items = models.IntegerField()
     failed_items = models.IntegerField()
     score = models.IntegerField()
-    delivery_date = models.DateTimeField()
     performance_data = models.FileField(upload_to='files', blank=True, null=True)
     exercise_version = models.IntegerField()
     professor_commentary = models.CharField(max_length=500)
