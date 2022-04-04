@@ -171,7 +171,7 @@ def login(request):
             "session_token" : str(token[0])
             })
 
-@api_view(['GET'])
+@api_view(['POST'])
 def logout(request):
     request_data = json.loads(request.body)
     sessionToken = request_data['session_token']
