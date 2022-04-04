@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import *
 import random, json, os
 
-@api_view(['GET'])
+@api_view(['POST'])
 @authentication_classes([TokenAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def pin_request(request):
@@ -59,7 +59,7 @@ def createNewPin():
         if not Pin.objects.filter(pin = possiblePin).exists():
             return possiblePin
 
-@api_view(['GET'])
+@api_view(['POST'])
 def start_vr_exercise(request):
     try:
         request_data = json.loads(request.body)
@@ -187,7 +187,7 @@ def logout(request):
             "message"   : 'session_token is required',
             })
 
-@api_view(['GET'])
+@api_view(['POST'])
 def get_courses(request):
     request_data = json.loads(request.body)
     sessionToken = request_data['session_token']
@@ -226,7 +226,7 @@ def get_courses(request):
             "message"   : 'session_token is required',
         })
 
-@api_view(['GET'])
+@api_view(['POST'])
 def get_courses_detail(request):
     request_data = json.loads(request.body)
     sessionToken = request_data['session_token']
