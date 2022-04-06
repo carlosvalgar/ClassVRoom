@@ -1,10 +1,13 @@
 {% load static %}
 <header class="flex justify-center items-center bg-white w-auto h-[10vh] border-y-2 border-black top-0 left-0 sticky z-50">
 
-    <div class="w-1/3 pl-6">
+    <div class="w-1/3 pl-6 flex justify-between">
         <nav>
             <a href="#" class="font-bold"><i class="fa-solid fa-envelope pr-3"></i>Contactanos </a> 
         </nav>
+        {% if AdminPermissions and UrlRapida%}
+            <a href="/{{ UrlRapida }}/{{ IdTask }}" class="p-1 cursor-pointer border-black border-2 border-radius rounded-xl pt-full hover:transition duration-1000 hover:bg-[#ffa76c] hover:text-white">Cualificación rápida</a>
+        {% endif %}
     </div>
     <div class="w-1/3 flex justify-center ">
         <a href="/" class="flex justify-center"><img src="{% static 'classroomvr\media\logomalo.png' %}" width="60px"></img>
@@ -13,12 +16,15 @@
     <div class="w-1/3 flex justify-end pr-6">
         <nav class="flex justify-center align-center space-x-4">
             {% if request.user.is_authenticated %}
-                <p> <span class="font-bold">Nombre:</span> {{ request.user.username }}</p>
-                <p> <span class="font-bold">Escuela:</span> {{ request.user.school }}</p>
+                <p class="self-center"> <span class="font-bold">Nombre:</span> {{ request.user.username }}</p>
+                <p class="self-center"> <span class="font-bold">Escuela:</span> {{ request.user.school }}</p>
                 {% if Course %}
-                    <p> <span class="font-bold">Curso:</span> {{ Course }} </p>
+                    <p class="self-center"> <span class="font-bold">Curso:</span> {{ Course }} </p>
                 {% endif %}
-                <p><a href="{% url 'logout' %}">Log out</a></p>
+                {% if AdminPermissions %}
+                    <a href="/admin" class="p-1 cursor-pointer border-black border-2 border-radius rounded-xl pt-full hover:transition duration-1000 hover:bg-[#ffa76c] hover:text-white">Admin</a>
+                {% endif %}
+                <p class="self-center"><a href="{% url 'logout' %}">Log out</a></p>
             {% else %}
                 <a href="login">No heu iniciat sessió<i class="fa-solid fa-arrow-left pl-3"></i></a>
             {% endif %}

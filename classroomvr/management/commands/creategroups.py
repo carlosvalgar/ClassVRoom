@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import Permission
 
 GROUPS = ['schoolAdmin', 'professor',]
-MODELS = ['course', 'subscription', 'resource', 'task', 'delivery', 'vr task', 'vr delivery']
+MODELS = ['course', 'subscription', 'resource', 'task', 'delivery', 'vr task', 'vr delivery', 'vr qualification']
 PERMISSIONS = ['view', 'add', 'delete', 'change',]
 
 class Command(BaseCommand):

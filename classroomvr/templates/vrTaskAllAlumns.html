@@ -13,8 +13,8 @@
         {% for qualification in VRQualifications %}
         <div class="containerDeliveries w-[90%] min-h-[100px] bg-[#eaeaea] text-center px-6 py-2 border-2 border-black rounded-2xl mb-6 flex flex-col break-words">
             <div class=" w-full flex justify-between text-2xl">
-                <p >{{qualification.student.first_name}}</p>
-                <p>{{qualification.score}}</p>
+                <a href="/vr-task/{{VRTask.pk}}/{{qualification.student.pk}}" class="text-orange-600 hover:text-orange-700 active:text-orange-900 visited:text-orange-400">{{qualification.student.first_name}}</a>
+                <input id="{{qualification.pk}}" type="number" value="{{qualification.score}}" class="w-[8%]">
             </div>
             <div class="deliveries w-[90%] min-h-[100px] bg-[#eaeaea] text-center mt-5 px-6 py-2 border-2 border-black rounded-2xl mb-6 flex flex-col break-words">
                 <div class="flex flex-row justify-between pb-6 ">
@@ -38,13 +38,23 @@
             </div>
             <div class="flex flex-row mt-5">
                 <button class="toggle py-1 px-6 mb-3 mr-auto cursor-pointer border-black border-2 border-radius rounded-xl pt-full hover:transition duration-1000 hover:bg-[#ffa76c] hover:text-white">Entregas</button>
-                <input class="enviar mt-auto py-1 px-6 mb-3 ml-auto cursor-pointer border-black border-2 border-radius rounded-xl pt-full hover:transition duration-1000 hover:bg-[#ffa76c] hover:text-white" type="submit" value="Enviar" name="Enviar">
+                <input id="{{qualification.pk}}" class="enviar mt-auto py-1 px-6 mb-3 ml-auto cursor-pointer border-black border-2 border-radius rounded-xl pt-full hover:transition duration-1000 hover:bg-[#ffa76c] hover:text-white" type="submit" value="Enviar" name="Enviar">
     
             </div>
         </div>
             
         {% endfor %}
     </div>
+</div>
+<div  id="alert" class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md relative" role="alert">
+	<div class="flex justify-center">
+	  <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
+	  <div>
+		<p class="font-bold">Our privacy policy has changed</p>
+		<p class="text-sm">Make sure you know how these changes affect you.</p>
+	  </div>
+	</div>
+	<p id="cerrar" class="absolute top-1.5 right-1.5 cursor-pointer">X</p>
 </div>
 {% endblock body_data %}
 {% block js %}
@@ -54,10 +64,23 @@
         crossorigin="anonymous"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+            $('#alert').hide()
             $(".deliveries").hide()
             $('.toggle').on('click',function(){
                 $(this).parent().siblings(".deliveries").slideToggle("slow")
             })
+            $('.enviar').on('click',function(){
+                let qualificationid= $(this).attr('id');
+                let score= $('input#'+qualificationid).val();
+                $.ajax({
+                    url: "/vrupdateProf/"+qualificationid+"/"+score,
+                    method : 'POST',
+                })
+                $('#alert').show()
+            })
+            $('#cerrar').click(function() {
+                $('#alert').css('display','none')
+            })
         })
-    </script>
+</script>
 {% endblock js %}
