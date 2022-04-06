@@ -37,13 +37,13 @@ def indvidualQualification(request,taskid,userid):
 		nextStudent = listStudentId[listStudentId.index(userid) + 1]
 
 	prevStudent = listStudentId[listStudentId.index(userid) - 1]
-
+	has_admin_permisions = request.user.is_staff
 	breadcrumbs = [
 		{'url':'/dashboard','name':'Inicio'},
 		{'url':'/course/{}'.format(course.pk),'name':course.name},
 		{'url':'','name':task.name},
 	]
-	
+
 	context = {
 		'Task' : task,
 		'Alumn' : alumn,
@@ -54,6 +54,9 @@ def indvidualQualification(request,taskid,userid):
 		'actualUserRol': rolUser,
 		'actualUserName': nameUser,
 		'Breadcrumbs': breadcrumbs,
+		'AdminPermissions'	: has_admin_permisions,
+		'UrlRapida'			: 'task-deliveries',
+		'IdTask'			: task.pk,
 	}
 	if rolUser.course_role == 'STUDENT':
 		return render(request, 'individualQualificationStudent.html',context)
@@ -73,18 +76,38 @@ def downloadFile(request, filename=''):
 			return HttpResponseNotFound('Error 404 File not found')
 	else:
 		return render(request, 'file.html')
+@login_required()
 @csrf_exempt
 def update(request, deliveryid, score, comprof):
 	delivery = get_object_or_404(Delivery, pk=deliveryid)
 	delivery.score = score
 	delivery.professor_commentary = comprof
 	delivery.save()
+@login_required()
 @csrf_exempt
 def vrupdate(request, qualificationid, score, comprof):
 	qualification = get_object_or_404(VRQualification, pk=qualificationid)
 	qualification.score = score
 	qualification.professor_commentary = comprof
 	qualification.save()
+@login_required()
+@csrf_exempt
+def vrupdateProf(request, qualificationid, score):
+	qualification = get_object_or_404(VRQualification, pk=qualificationid)
+	qualification.score = score
+	qualification.save()
+@login_required()
+@csrf_exempt
+def vrupdateStudent(request, qualificationid, studentCommentary):
+	qualification = get_object_or_404(VRQualification, pk=qualificationid)
+	qualification.student_commentary = studentCommentary
+	qualification.save()
+@login_required()
+@csrf_exempt
+def updateStudent(request, deliveryid, studentCommentary):
+	delivery = get_object_or_404(Delivery, pk=deliveryid)
+	delivery.student_commentary = studentCommentary
+	delivery.save()
 
 def landingPage(request):
 	if request.user.is_authenticated:
@@ -97,11 +120,13 @@ def login(request):
 
 @login_required(login_url="/login")
 def dashboard(request):
-	if request.user.is_authenticated: 
+	if request.user.is_authenticated:
 		userSubscriptions = Subscription.objects.filter(user=request.user.pk)
 		userCourses = Course.objects.filter(subscription__in=userSubscriptions)
+		has_admin_permisions = request.user.is_staff
 		context = {
-			'Courses': userCourses,
+			'Courses'			: userCourses,
+			'AdminPermissions'	: has_admin_permisions,
 		}
 	return render(request, 'dashboard.html',context)
 
@@ -112,20 +137,23 @@ def courses(request,courseID):
 	tasks = Task.objects.filter(course=courseID)
 	vrTasks = VRTask.objects.filter(course=courseID)
 	firstId = Subscription.objects.filter(course=courseID,course_role='STUDENT')[0]
-	
+	has_admin_permisions = request.user.is_staff
 	context = {
 		'firstId'	: firstId,
 		'userRol'	: userRol,
 		'resources'	: resources,
 		'tasks'		: tasks,
-		'vrTasks'	: vrTasks
+		'vrTasks'	: vrTasks,
+		'AdminPermissions'	: has_admin_permisions,
 	}
 	return render(request, 'courses.html',context)
+
+@login_required(login_url="/login")
 def taskAllAlumns(request, taskid):
 	task = get_object_or_404(Task, pk=taskid)
 	delivery = Delivery.objects.filter(task=task.id)
 	course = Course.objects.get(pk=task.course.pk)
-
+	has_admin_permisions = request.user.is_staff
 	breadcrumbs = [
 		{'url':'/dashboard','name':'Inicio'},
 		{'url':'/course/{}'.format(course.pk),'name':course.name},
@@ -137,6 +165,7 @@ def taskAllAlumns(request, taskid):
 		'Entrega': delivery,
 		'Breadcrumbs':breadcrumbs,
 		'Course':course.name,
+		'AdminPermissions'	: has_admin_permisions,
 	}
 	return render(request, 'taskAllAlumns.html',context)
 
@@ -151,7 +180,7 @@ def allTasksPerCoursePerStudent(request, course_id):
 	for task in tasks:
 		delivery = Delivery.objects.get(task = task, student = request.user)
 		student_tasks_deliveries.append({"task" : task, "delivery" : delivery})
-	
+	has_admin_permisions = request.user.is_staff
 	breadcrumbs = [
 		{'url':'/dashboard','name':'Inicio'},
 		{'url':'/course/{}'.format(course.pk),'name':course.name},
@@ -164,9 +193,11 @@ def allTasksPerCoursePerStudent(request, course_id):
 		'student'					: request.user,
 		'student_tasks_deliveries'	: student_tasks_deliveries,
 		'Breadcrumbs'				: breadcrumbs,
+		'AdminPermissions'			: has_admin_permisions,
 	}
 	return render(request, 'allTasksPerCoursePerStudent.html',context)
 
+@login_required(login_url="/login")
 def taskVrIndividualQualification(request,vrtaskid,userid):
 	alumn = get_object_or_404(User, pk=userid)
 	vrtask = get_object_or_404(VRTask, pk=vrtaskid)
@@ -174,6 +205,7 @@ def taskVrIndividualQualification(request,vrtaskid,userid):
 	vrdeliveries = VRDelivery.objects.filter(vr_task=vrtaskid, student=userid)
 	listStudent = Subscription.objects.filter(course=vrtask.course, course_role='STUDENT')
 	listStudentId = []
+	has_admin_permisions = request.user.is_staff
 	for student in listStudent:
 		listStudentId.append(student.user.pk)
 
@@ -200,15 +232,22 @@ def taskVrIndividualQualification(request,vrtaskid,userid):
 		'PrevStudent' 					: prevStudent,
 		'Qualification'					: qualification,
 		'Breadcrumbs'					: breadcrumbs,
+		'AdminPermissions'				: has_admin_permisions,
+		'UrlRapida'						: 'vr-task-deliveries',
+		'IdTask'						: vrtask.pk,
 		
 	}
-	return render(request, 'vrIndividualQualification.html',context)
+	if has_admin_permisions:
+		return render(request, 'vrIndividualQualification.html',context)
+	return render(request, 'vrIndividualQualificationStudent.html',context)
 
+@login_required(login_url="/login")
 def vrTaskAllAlumns(request, vrtaskid):
 	vrtask = get_object_or_404(VRTask, pk=vrtaskid)
 	vrdeliveries = VRDelivery.objects.filter(vr_task=vrtaskid)
 	vrqualifications = VRQualification.objects.filter(vr_task=vrtaskid)
 	course = Course.objects.get(name=vrtask.course)
+	has_admin_permisions = request.user.is_staff
 	breadcrumbs = [
 		{'url':'/dashboard','name':'Inicio'},
 		{'url':'/course/{}'.format(course.pk),'name':course.name},
@@ -220,5 +259,7 @@ def vrTaskAllAlumns(request, vrtaskid):
 		'VRDeliveries'		: vrdeliveries,
 		'VRQualifications'	: vrqualifications,
 		'Course'			: course,
+		'AdminPermissions'	: has_admin_permisions,
+		'Breadcrumbs'		: breadcrumbs,
 	}
 	return render(request, 'vrTaskAllAlumns.html',context)

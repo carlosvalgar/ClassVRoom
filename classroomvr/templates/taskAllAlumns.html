@@ -11,7 +11,7 @@
             <div  id="{{ Delivery.student.username }}" class="w-[90%] bg-[#eaeaea] border-2 border-black rounded-2xl mb-5 flex flex-row">
                 <div class="pl-5 pt-2 w-full">
                     <p class="text-xl font-semibold pb-2 underline"> Nom </p>
-                    <p>{{ Delivery.student.username }}</p>
+                    <a href="/exercise/{{Tarea.pk}}/{{Delivery.student.pk}}" class="text-orange-600 hover:text-orange-700 active:text-orange-900 visited:text-orange-400">{{ Delivery.student.username }}</a>
                 </div>
                 <div class="pl-3 pt-2 w-full">
                     <p class="text-xl font-semibold pb-2 underline">Email</p>
@@ -57,6 +57,16 @@
         </div>
     </div>
 </div>
+<div  id="alert" class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md relative" role="alert">
+	<div class="flex justify-center">
+	  <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
+	  <div>
+		<p class="font-bold">Our privacy policy has changed</p>
+		<p class="text-sm">Make sure you know how these changes affect you.</p>
+	  </div>
+	</div>
+	<p id="cerrar" class="absolute top-1.5 right-1.5 cursor-pointer">X</p>
+</div>
 {% endblock body_data %}
 {% block js %}
 <script
@@ -65,6 +75,7 @@
         crossorigin="anonymous"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+            $('#alert').hide()
             $('.enviar').on('click',function(){
                 let name = $(this).parent().parent().attr('id');
                 let score = $('#'+name+'score').val();
@@ -74,7 +85,10 @@
                     url: "/vrupdate/"+deliveryid+"/"+score+"/"+comprof,
                     method : 'POST',
                 })
-				alert('Se ha cambiado con éxito')
+                $('#alert').show()
+            })
+            $('#cerrar').click(function() {
+                $('#alert').css('display','none')
             })
         });
 </script>

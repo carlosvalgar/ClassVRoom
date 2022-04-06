@@ -7,7 +7,10 @@ from django.contrib.auth.views import LoginView, LogoutView
 urlpatterns = [
     path('exercise/<int:taskid>/<int:userid>', views.indvidualQualification, name='index'),
     path('update/<int:deliveryid>/<int:score>/<str:comprof>', views.update, name='update'),
+    path('updateStudent/<int:deliveryid>/<str:studentCommentary>', views.updateStudent, name='updateStudent'),
     path('vrupdate/<int:qualificationid>/<int:score>/<str:comprof>', views.vrupdate, name='vrupdate'),
+    path('vrupdateStudent/<int:qualificationid>/<str:studentCommentary>', views.vrupdateStudent, name='vrupdateStudent'),
+    path('vrupdateProf/<int:qualificationid>/<int:score>', views.vrupdateProf, name='vrupdateProf'),
     path('', views.landingPage, name='landingPage'),
     path('login', LoginView.as_view(template_name='login.html'), name='login'),
     path('logout', LogoutView.as_view(template_name='login.html'), name='logout'),

@@ -74,9 +74,9 @@ class VRTask(models.Model):
 class VRQualification(models.Model):
     vr_task = models.ForeignKey(VRTask, on_delete=models.CASCADE)
     student = models.ForeignKey(User, on_delete=models.CASCADE)
-    score = models.PositiveIntegerField(validators=[MaxValueValidator(10)], blank=True, null=True)
-    professor_commentary = models.CharField(max_length=500)
-    student_commentary = models.CharField(max_length=500)
+    score = models.PositiveIntegerField(validators=[MaxValueValidator(10)], blank=True)
+    professor_commentary = models.CharField(max_length=500,  blank=True)
+    student_commentary = models.CharField(max_length=500,  blank=True)
 
 class Delivery(models.Model):
     class DeliveryStatusType(models.TextChoices):
